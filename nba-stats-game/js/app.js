@@ -7,7 +7,8 @@ const currSeason = 2018;
 
 const game = {
     playerCache : [],
-    playersInGame : []
+    playersInGame : [],
+    correctAnswer: {}
 }
 
 const addMinutes = (string) => {
@@ -55,6 +56,7 @@ class Player {
 
                 game.playerCache.push(this);
                 game.playersInGame.push(this);
+                game.correctAnswer[this.id] = false;
 
                 console.log('Players:', game.playersInGame);
 
@@ -109,7 +111,7 @@ class Player {
         }
 
         for(let key in retStats.total) {
-            retStats.average[key] = (retStats.total[key] / totalGames).toFixed(2);
+            retStats.average[key] = parseFloat((retStats.total[key] / totalGames).toFixed(2));
         }
         
         retStats.gamesPlayed = totalGames;
@@ -172,14 +174,14 @@ const showPlayerComparison = () => {
     //Add player 1 and player 2 buttons
     let $playerOptionsCont = $('<div>').addClass('player-options-container player-name-drop');  
     $('.game-area-container').append($playerOptionsCont);
-    let $player1Option = $('<div>').addClass('player1-option draggable-player').text(player1.fullName);
-    $player2Option = $('<div>').addClass('player2-option draggable-player').text(player2.fullName);
+    let $player1Option = $('<div>').addClass('player1-option draggable-player').text(player1.fullName).attr('playerID', player1['id']);
+    let $player2Option = $('<div>').addClass('player2-option draggable-player').text(player2.fullName).attr('playerID', player2['id']);
     $playerOptionsCont.append($player1Option).append($player2Option);
     
     //Make these buttons dragable
     $('.draggable-player').draggable({
         scope: 'playerName',
-        revertDuration: 1000,
+        revertDuration: 100,
         opacity: 1,
         snap: true,
         start: function(event, ui) {
@@ -217,9 +219,37 @@ const showPlayerComparison = () => {
                 at: "center",
                 of: $(this)
             });
+            
+
+            //Issues here 
+                //Need lose condition
+            let dragAnswer = $(ui.draggable).attr('playerID');
+            let dropAnswer = $(this).attr('playerID');
+            if (dragAnswer === dropAnswer) {
+                console.log('Correct Answer in: ', $(this));
+                game.correctAnswer[dragAnswer] = true;
+
+                let bothCorrect = true;
+                for(let playerKey in game.correctAnswer) {
+                    if(!game.correctAnswer[playerKey]){
+                        bothCorrect = false;
+                    }
+                }
+
+                if(bothCorrect){
+                    console.log('Both players placed correctly');
+                    
+                    let $winnerModal
+
+                    //$('.player-options-container').append($('<p> You win! </p>'));
+                        //Putting it here actually messes up the Draggable divs, use modal instead
+                }
+
+            }
         }
     });
     //Info on draggable from jQuery UI docs, https://codepen.io/jyloo/pen/GjbmLm, https://stackoverflow.com/questions/26746823/jquery-ui-drag-and-drop-snap-to-center
+    //Using http://touchpunch.furf.com/ for mobile compatibility with jQuery drag/drop 
 
     
   
@@ -235,7 +265,7 @@ const createPlayerStatsElements = (playerElement, playerNum) => {
     playerElement.append($headshot);
     
     //TODO #1 - for testing - remove Name from final, this should just be the draggable location
-    playerElement.append($('<div>').text(game.playersInGame[playerNum].fullName).addClass('player-name-drop name-answer'));
+    playerElement.append($('<div>').text(game.playersInGame[playerNum].fullName).addClass('player-name-drop name-answer').attr('playerID', game.playersInGame[playerNum]['id']));
     
     //Create Stat Sub-sections (pts / reb+min / ast+stl+blk)
     //Section 1 - Pts, FG%, 3P%, FT%
@@ -243,9 +273,9 @@ const createPlayerStatsElements = (playerElement, playerNum) => {
     let $ul1 = $('<ul>');
     $statSect1.append($ul1);
     let $liPts = $('<li>').append($('<span>').addClass('main-stat').text(`Pts: ${avgStatsObj['pts']}`));
-    let $liFg = $('<li>').text(`Fg: ${(avgStatsObj.fgm/avgStatsObj.fga).toFixed(2)}%  (${avgStatsObj.fgm}/${avgStatsObj.fga})`);
-    let $li3p = $('<li>').text(`3P: ${(avgStatsObj.fg3m/avgStatsObj.fg3a).toFixed(2)}%  (${avgStatsObj.fg3m}/${avgStatsObj.fg3a})`);
-    let $liFt = $('<li>').text(`Ft: ${(avgStatsObj.ftm/avgStatsObj.fta).toFixed(2)}%  (${avgStatsObj.ftm}/${avgStatsObj.fta})`);
+    let $liFg = $('<li>').text(`Fg: ${(avgStatsObj.fgm/avgStatsObj.fga).toFixed(2)}%  (${(avgStatsObj.fgm).toFixed(1)}/${(avgStatsObj.fga).toFixed(1)})`);
+    let $li3p = $('<li>').text(`3P: ${(avgStatsObj.fg3m/avgStatsObj.fg3a).toFixed(2)}%  (${(avgStatsObj.fg3m).toFixed(1)}/${(avgStatsObj.fg3a).toFixed(1)})`);
+    let $liFt = $('<li>').text(`Ft: ${(avgStatsObj.ftm/avgStatsObj.fta).toFixed(2)}%  (${(avgStatsObj.ftm).toFixed(1)}/${(avgStatsObj.fta).toFixed(1)})`);
     $ul1.append($liPts).append($liFg).append($li3p).append($liFt);
 
     //Section 2 - Rebounds + Minutes
