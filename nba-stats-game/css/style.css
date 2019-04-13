@@ -1,0 +1,30 @@
+* {
+    border: 1px solid black;
+}
+
+body {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+.nav-menu-container {
+    display: flex;
+    flex-flow: row nowrap;
+}
+.input-container {
+    width: 90%;
+    height: 15vh;
+}
+
+.game-area-container {
+    width: 90%;
+    height: 60vh;
+}
+
+.player-options-container {
+    height: 19%;
+}
+.player-stats-container {
+    height: 79%;
+}

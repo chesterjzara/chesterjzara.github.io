@@ -2,20 +2,51 @@
 <html lang="en" dir="ltr">
     <head>
         <meta charset="utf-8">
-        <title>NBA Testing</title>
+        <title>NBA Stats</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" media="screen" href="style.css">
+        <link rel="stylesheet" type="text/css" media="screen" href="css/style.css">
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" charset="utf-8"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" charset="utf-8"></script>
-        <script src="exampleData.js" charset="utf-8"></script>
-        <script src="app.js" charset="utf-8"></script>
+        <!-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" charset="utf-8"></script> -->
+        <script src="js/exampleData.js" charset="utf-8"></script>
+        <script src="js/app.js" charset="utf-8"></script>
     </head>
     <body>
-        <h1>Testing NBA App</h1>
-        <form class="player-form">
-            <input type="text" id="player-input-box" placeholder="Player Name"/>
-            <input type="submit" value="Choose Player"/>
-        </form>
-        <img src="https://d2cwpp38twqe55.cloudfront.net/req/201902151/images/players/duranke01.jpg" alt="">
+        <h1>NBA Stats App</h1>
+        <div class="nav-menu-container">
+            <div class="player-comparison">
+                Player Comparison
+            </div>
+            <div class="player-team">
+                Who does he play for?
+            </div>
+            <div class="about-info">
+                About/Info
+            </div>
+        </div>
+        <div class="input-container">
+            <form class="player-form">
+                <input type="text" id="player-input-box" placeholder="Player Name"/>
+                <input type="submit" value="Choose Player"/>
+            </form>
+            <button class="top-x-button">Top X</button>
+            <button class="random-button">Random</button>
+        </div>
+
+        <div class="game-area-container">
+            <div class="player-options-container">
+                <div class="player1-option"></div>
+                <div class="player2-option"></div>
+            </div>
+            <div class="player-stats-container">
+                <div class="player1-stats-container"></div>
+                <div class="player2-stats-container"></div>
+            </div>
+        </div>
+
+        
+        
+        
+
+        <!-- <img src="https://d2cwpp38twqe55.cloudfront.net/req/201902151/images/players/duranke01.jpg" alt=""> -->
     </body>
 </html>

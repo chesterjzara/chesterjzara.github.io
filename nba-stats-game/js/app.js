@@ -103,24 +103,6 @@ class Player {
 
 
 
-
-const genericAPIGet = (url, searchString) => {
-    console.log('Hit: api call');
-    $.ajax({
-        url: url + searchString
-    }).then(
-        (data) => {
-            console.log(data);
-            // console.log(JSON.stringify(data));
-            return data;
-        },
-        () => {
-            console.log('Player ID: bad request');
-        }
-    );
-
-}
-
 const getPlayerIDFromInput = (event) => {
     console.log('Hit: player ID input function');
     //TODO - Add cache check here
@@ -167,7 +149,12 @@ const buildPlayerFromID = (data) => {
     game.playersInGame.push(newPlayer);
 
     console.log('Players:', game.playersInGame);
+
+    if(playersInGame.length > 1) {
+        showComparisonData();
+    }
 }
+
 
 
 $( () => {
