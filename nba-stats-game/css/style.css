@@ -19,12 +19,44 @@ body {
 
 .game-area-container {
     width: 90%;
-    height: 60vh;
+    height: 75vh;
 }
 
 .player-options-container {
     height: 19%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    align-items: center;
+}
+.player1-option, .player2-option {
+    flex-basis: 30%;
+    text-align: center;
+}
+.player1-option {
+    background-color: rgba(243, 45, 45, 0.8)
+}
+.player2-option {
+    background-color: rgba(46, 50, 243, 0.8)
 }
 .player-stats-container {
     height: 79%;
+    display: flex;
+    flex-flow: row nowrap;
 }
+.player-name-drop{
+    height: 2em;
+}
+.headshot-image {
+    width: 100px;
+    height: auto;
+}
+.player1-stats-container, .player2-stats-container{
+    flex-basis: 50%;
+}
+ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+
