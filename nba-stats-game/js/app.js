@@ -9,7 +9,9 @@ const game = {
     playerCache : [],
     playersInGame : [],
     matchPlaced: [false, false],
-    matchAnswer: [false, false]
+    matchAnswer: [false, false],
+    activeGame: 0,
+    teamGuessActivePlayer : null
 }
 
 const addMinutes = (string) => {
@@ -48,7 +50,9 @@ class Player {
         this.teamID = teamID;
         this.teamName = teamName;
 
-        this.stats = {}
+        this.stats = {};
+
+        //this.chooseTeamHandler = this.chooseTeam();   //.bind(this);
     }
 
     getCurrSeasonStats() {
@@ -131,8 +135,49 @@ class Player {
         //For debugging
         return retStats;
     }
+
+    playTeamGame() {
+        //set event listener on all the teams
+        console.log('Entered playTeamGame');
+        console.log(this);
+
+        $('.team-player-name').text(this.fullName);
+
+        game.teamGuessActivePlayer = this;
+        $('.team-container').on('click', testGlobalFunction);
+    
+    }
+    // chooseTeam(event) {
+    //     console.log('Team Selected');
+    //     console.log('This: ', this);
+    //     console.log("event", event);
+    //     console.log('Target: ', event.target);
+    //     console.log('curr Tar: ', event.currentTaret);
+    // }
 }
 
+const testGlobalFunction = (event) => {
+    console.log('Target: ', event.target);
+    console.log('Clicked team ID = ',$(event.target).attr('teamid'));
+    console.log('Player team ID = ',game.teamGuessActivePlayer.teamID);
+    
+    let clickedTeamID = $(event.target).attr('teamid');
+    let playerTeamID = game.teamGuessActivePlayer.teamID;
+
+    if(parseInt(clickedTeamID) === parseInt(playerTeamID)){
+        console.log('Correct');
+
+        //end game - show modal, reset everything
+        //Add to score
+    }
+    else {
+        console.log('Wrong!');
+        //end game - show modal, reset everything
+        //Add to score
+    }
+    $('.team-container').off('click', testGlobalFunction);
+
+}
 
 const getPlayerIDFromInput = (event) => {
     console.log('Hit: player ID input function');
@@ -142,14 +187,8 @@ const getPlayerIDFromInput = (event) => {
     let inputPlayerName = $('#player-input-box').val();
     //TODO - betteer parsing? - let parsedInputName = inputPlayerName.replace
     let searchParam = `?search=${inputPlayerName}`;
-    
-    //TODO - For Testing/Debugging
-    if(inputPlayerName === 'l'){
-        searchParam = `?search=lebron james`
-    }
-    if(inputPlayerName === 'k'){
-        searchParam = `?search=kevin durant`
-    }
+
+
     apiCallPlayerName(searchParam);
     //Reset form + prevent refresh:
     event.preventDefault();
@@ -164,6 +203,14 @@ const getPlayersFromRandom = (event) => {
     let searchStr = '?search='
     apiCallPlayerName(searchStr + ranPlayerName1);
     apiCallPlayerName(searchStr + ranPlayerName2);
+}
+const getSinglePlayerRandom = (event) => {
+    resetGame();
+    //Todo - add reset here?
+    
+    let ranPlayerName1 = playerNamesMasterList[Math.floor(Math.random() * playerNamesMasterList.length)];
+    let searchStr = '?search='
+    apiCallPlayerName(searchStr + ranPlayerName1);
 }
 
 const getPlayersFromTopX = (event) => {
@@ -204,8 +251,15 @@ const buildPlayerFromID = (data) => {
     let teamName = data["data"][0]["team"]["full_name"]
     
     let newPlayer = new Player(playerID, firstName, lastName, teamID, teamName);
-    newPlayer.getCurrSeasonStats();
-
+    
+    if(game.activeGame === 1) {
+        console.log("In Matching Game code branch");
+        newPlayer.getCurrSeasonStats();
+    }
+    if(game.activeGame === 2) {
+        console.log("In Team Game code branch");
+        newPlayer.playTeamGame();
+    }
 
    
 }
@@ -387,6 +441,8 @@ const resetGame = () => {
 }
 
 const setupMatchGame = () => {
+    //Set the code to use the Matching Game 
+    game.activeGame = 1;
     //Clear any existing info and do a reset
     $('.input-container').empty();
     $('.game-area-container').empty();
@@ -421,6 +477,72 @@ const setupMatchGame = () => {
     $matchOptionButtons.append( $('<button> Random</button>').addClass('random-button') );
     $matchOptionButtons.append( $('<button> Reset</button>').addClass('reset-button') );
 
+    //Add Event Listeners
+    $('.player-form').on('submit', getPlayerIDFromInput);
+    $('.reset-button').on('click', resetGame);
+    $('.random-button').on('click', getPlayersFromRandom);
+    $('.top-x-button').on('click', getPlayersFromTopX);
+    $('#player-input-box').autocomplete({
+        source: playerNamesMasterList
+    });
+}
+
+const setupTeamGame = () => {
+    //Set code to use the Team Game code
+    game.activeGame = 2;
+    
+    //Clear any existing info and do a reset
+    $('.input-container').empty();
+    $('.game-area-container').empty();
+    resetGame();
+
+    //Add input container elements
+    $teamInput = $('<div>').addClass('team-input');
+    $('.input-container').append($teamInput);
+    $teamInput.append ($('<div>').addClass('team-random-player').text('Random Player') );
+    $teamInput.append ($('<div>').addClass('score-board').text('Score: 0 of 0') );
+    $teamInput.append ($('<div>').addClass('hint-button').text('Hint') );
+    $('.input-container').append( $('<div>').addClass('team-player-name') );
+
+    //Add conference select elements in game container
+    $conferenceSelect = $('<div>').addClass('conference-select');
+    $('.game-area-container').append($conferenceSelect);
+    $conferenceSelect.append( $('<div>').addClass('eastern-conf').text('East') );
+    $conferenceSelect.append( $('<div>').addClass('western-conf').text('West') );
+
+    //Add team logo elements in game container
+    $teamContainer = $('<div>').addClass('team-container');
+    $('.game-area-container').append($teamContainer);
+
+    for (let i = 0; i < Object.keys(allTeams).length; i++) {
+        $newTeamDiv = $('<div>').addClass('team-icon-' + allTeams[i].id)
+        $newTeamDiv.attr('teamID',allTeams[i].id)
+        $newTeamDiv.css( {
+            'background': `url('${allTeams[i].url}')`,
+            'background-size': 'contain',
+            'background-repeat' : 'no-repeat',
+            'background-position-x' : 'center'
+        });
+        $newTeamDiv.addClass('east-team');
+        $teamContainer.append($newTeamDiv);
+        if (i > 14){
+            $newTeamDiv.css('display', 'none');
+            $newTeamDiv.addClass('west-team').removeClass('east-team');
+        }
+    }
+
+    //Event handler to switch between East/West
+    $('.eastern-conf').on('click', () => {
+        $('.west-team').hide();
+        $('.east-team').show();
+    })
+    $('.western-conf').on('click', () => {
+        $('.east-team').hide();
+        $('.west-team').show();
+    })
+
+    //Add event listener to launch game on "Random Player" button
+    $('.team-random-player').on('click', getSinglePlayerRandom);
 }
 
 $( () => {
@@ -429,12 +551,6 @@ $( () => {
     
     $('.player-comparison').on('click', setupMatchGame)
 
-    $('.player-form').on('submit', getPlayerIDFromInput);
-    $('.reset-button').on('click', resetGame);
-    $('.random-button').on('click', getPlayersFromRandom);
-    $('.top-x-button').on('click', getPlayersFromTopX);
-    $('#player-input-box').autocomplete({
-        source: playerNamesMasterList
-    });
+    $('.player-team').on('click', setupTeamGame)
 
 })

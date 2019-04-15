@@ -95,3 +95,34 @@ ul {
 	padding: 2%;
 	line-height: 3.5em;
 }
+
+/* Team Guess Game */
+.conference-select{
+    display: flex;
+    flex-flow: row nowrap;
+}
+.conference-select > div{
+    flex-basis: 50%;
+    text-align: center
+}
+.team-container{
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+.team-container > * {
+    width: 30%;
+    height: 13vh;
+    /* background: url("../img/teams/atl-hawks.png"); */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-x: center;
+}
+.team-input {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: stretch;
+}
+.team-input > div {
+    flex-basis: 49%;
+}

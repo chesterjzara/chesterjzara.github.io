@@ -762,4 +762,55 @@ const playerNamesMasterList = [
     "Jarred Vanderbilt",
     "Bruce Brown",
     "Justin Jackson"
+];
+
+const allTeams = [
+    {name: "Atlanta Hawks", id: 1, url: "img/teams/atl.png"},
+    {name: "Boston Celtics", id: 2, url: "img/teams/bos.png"},
+    {name: "Brooklyn Nets", id: 3, url: "img/teams/bkn.png"},
+    {name: "Charlotte Hornets", id: 4, url: "img/teams/cha.png"},
+    {name: "Chicago Bulls", id: 5, url: "img/teams/chi.png"},
+    {name: "Cleveland Cavaliers ", id: 6, url: "img/teams/cle.png"},
+    {name: "Detroit Pistons", id: 9, url: "img/teams/det.png"},
+    {name: "Indiana Pacers", id: 12, url: "img/teams/ind.png"},
+    {name: "Miami Heat", id: 16, url: "img/teams/mia.png"},
+    {name: "Milwaukee Bucks", id: 17, url: "img/teams/mil.png"},
+    {name: "New York Knicks", id: 20, url: "img/teams/nyk.png"},
+    {name: "Orlanda Magic", id: 22, url: "img/teams/orl.png"},
+    {name: "Philadelphia 76ers", id: 23, url: "img/teams/phi.png"},
+    {name: "Toronto Raptors", id: 28, url: "img/teams/tor.png"},
+    {name: "Washington Wizards", id: 30, url: "img/teams/was.png"},
+    {name: "Dallas Mavericks", id: 7, url: "img/teams/dal.png"},
+    {name: "Denver Nuggests", id: 8, url: "img/teams/den.png"},
+    {name: "Golden State Warriors", id: 10, url: "img/teams/gsw.png"},
+    {name: "Houston Rockets", id: 11, url: "img/teams/hou.png"},
+    {name: "Los Angeles Clippers", id: 13, url: "img/teams/lac.png"},
+    {name: "Los Angeles Lakers", id: 14, url: "img/teams/lal.png"},
+    {name: "Memphis Grizzlies", id: 15, url: "img/teams/mem.png"},
+    {name: "Minnesota Timberwolves", id: 18, url: "img/teams/min.png"},
+    {name: "New Orleans Pelicans", id: 19, url: "img/teams/nop.png"},
+    {name: "Oklahoma City Thunder", id: 21, url: "img/teams/okc.png"},
+    {name: "Phoenix Suns", id: 24, url: "img/teams/phx.png"},
+    {name: "Portland Trail Blazers", id: 25, url: "img/teams/por.png"},
+    {name: "Sacramento Kings", id: 26, url: "img/teams/sac.png"},
+    {name: "San Antonio Spurs", id: 27, url: "img/teams/sas.png"},
+    {name: "Utah Jazz", id: 29, url: "img/teams/uta.png"}
 ]
+
+// const westTeams = [
+//     {name: "Dallas Mavericks", id: 7, url: "../img/teams/dal.png"},
+//     {name: "Denver Nuggests", id: 8, url: "../img/teams/den.png"},
+//     {name: "Golden State Warriors", id: 10, url: "../img/teams/gsw.png"},
+//     {name: "Houston Rockets", id: 11, url: "../img/teams/hou.png"},
+//     {name: "Los Angeles Clippers", id: 13, url: "../img/teams/lac.png"},
+//     {name: "Los Angeles Lakers", id: 14, url: "../img/teams/lal.png"},
+//     {name: "Memphis Grizzlies", id: 15, url: "../img/teams/mem.png"},
+//     {name: "Minnesota Timberwolves", id: 18, url: "../img/teams/min.png"},
+//     {name: "New Orleans Pelicans", id: 19, url: "../img/teams/nop.png"},
+//     {name: "Oklahoma City Thunder", id: 21, url: "../img/teams/okc.png"},
+//     {name: "Phoenix Suns", id: 24, url: "../img/teams/phx.png"},
+//     {name: "Portland Trail Blazers", id: 25, url: "../img/teams/por.png"},
+//     {name: "Sacramento Kings", id: 26, url: "../img/teams/sac.png"},
+//     {name: "San Antonio Spurs", id: 27, url: "../img/teams/sas.png"},
+//     {name: "Utah Jazz", id: 29, url: "../img/teams/uta.png"}
+// ]
