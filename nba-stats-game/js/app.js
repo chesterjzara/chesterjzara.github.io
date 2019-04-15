@@ -102,7 +102,6 @@ class Player {
             gamesPlayed : 0
         };
 
-
         let gamesArr = statsData["data"];
         let totalGames = gamesArr.length;
 
@@ -158,6 +157,8 @@ const getPlayerIDFromInput = (event) => {
 }
 
 const getPlayersFromRandom = (event) => {
+    resetGame();
+
     let ranPlayerName1 = playerNamesMasterList[Math.floor(Math.random() * playerNamesMasterList.length)];
     let ranPlayerName2 = playerNamesMasterList[Math.floor(Math.random() * playerNamesMasterList.length)];
     let searchStr = '?search='
@@ -166,6 +167,8 @@ const getPlayersFromRandom = (event) => {
 }
 
 const getPlayersFromTopX = (event) => {
+    resetGame();
+
     let ranPlayerName1 = playerNamesMasterList[Math.floor(Math.random() * 100)];
     let ranPlayerName2 = playerNamesMasterList[Math.floor(Math.random() * 100)];
     let searchStr = '?search='
@@ -334,8 +337,9 @@ const createPlayerStatsElements = (playerElement, playerNum) => {
     playerElement.append($headshot);
     
     //TODO #1 - for testing - remove Name from final, this should just be the draggable location
-    playerElement.append($('<div>').text(game.playersInGame[playerNum].fullName).addClass('player-name-drop name-answer').attr('playerID', game.playersInGame[playerNum]['id']));
-    
+    //playerElement.append($('<div>').text(game.playersInGame[playerNum].fullName).addClass('player-name-drop name-answer').attr('playerID', game.playersInGame[playerNum]['id']));
+    playerElement.append($('<div>').addClass('player-name-drop name-answer').attr('playerID', game.playersInGame[playerNum]['id']));
+
     //Create Stat Sub-sections (pts / reb+min / ast+stl+blk)
     //Section 1 - Pts, FG%, 3P%, FT%
     let $statSect1 = $('<div>').addClass('stat-1');
@@ -403,8 +407,20 @@ const setupMatchGame = () => {
         'value' : "Choose Player",
     } ));
 
-    
-    
+    //player-select-bottom
+        //Player select display
+    $bottomSection = $('<div>').addClass('player-select-bottom');
+    $inputContainer.append($bottomSection);
+    $playerSelectedCont = ( $('<div>').addClass('player-selected-container') );
+    $bottomSection.append($playerSelectedCont);
+    $playerSelectedCont.append( $('<ol>').addClass('player-selected-list') );
+        //Button options
+    $matchOptionButtons = $('<div>').addClass('match-option-buttons');
+    $bottomSection.append($matchOptionButtons);
+    $matchOptionButtons.append( $('<button> Top 100</button>').addClass('top-x-button') );
+    $matchOptionButtons.append( $('<button> Random</button>').addClass('random-button') );
+    $matchOptionButtons.append( $('<button> Reset</button>').addClass('reset-button') );
+
 }
 
 $( () => {
