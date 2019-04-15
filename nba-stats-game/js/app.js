@@ -166,7 +166,11 @@ const getPlayersFromRandom = (event) => {
 }
 
 const getPlayersFromTopX = (event) => {
-    
+    let ranPlayerName1 = playerNamesMasterList[Math.floor(Math.random() * 100)];
+    let ranPlayerName2 = playerNamesMasterList[Math.floor(Math.random() * 100)];
+    let searchStr = '?search='
+    apiCallPlayerName(searchStr + ranPlayerName1);
+    apiCallPlayerName(searchStr + ranPlayerName2);
 }
 
 const apiCallPlayerName = (searchParam) => {
@@ -378,19 +382,43 @@ const resetGame = () => {
 
 }
 
+const setupMatchGame = () => {
+    //Clear any existing info and do a reset
+    $('.input-container').empty();
+    $('.game-area-container').empty();
+    resetGame();
+
+    //Add input container elements
+    $inputContainer = $('.input-container');
+    //player-form
+    $form = $('<form>').addClass('player-form');
+    $inputContainer.append($form);
+    $form.append( $('<input>').attr( {
+        'type' : 'text',
+        'id' : "player-input-box",
+        'placeholder' : "Player Name"
+    } ));
+     $form.append( $('<input>').attr( {
+        'type' : 'submit',
+        'value' : "Choose Player",
+    } ));
+
+    
+    
+}
+
 $( () => {
     //getPlayerSeasonStats(145, 2018)
 
-    $('#player-input-box').autocomplete({
-        source: playerNamesMasterList
-    });
-
-
-    //Get buttons we'll need
-    game.$playerOptionsCont = $('.player-options-container');
+    
+    $('.player-comparison').on('click', setupMatchGame)
 
     $('.player-form').on('submit', getPlayerIDFromInput);
     $('.reset-button').on('click', resetGame);
     $('.random-button').on('click', getPlayersFromRandom);
-   
+    $('.top-x-button').on('click', getPlayersFromTopX);
+    $('#player-input-box').autocomplete({
+        source: playerNamesMasterList
+    });
+
 })
