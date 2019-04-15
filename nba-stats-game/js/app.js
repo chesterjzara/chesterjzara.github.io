@@ -11,7 +11,8 @@ const game = {
     matchPlaced: [false, false],
     matchAnswer: [false, false],
     activeGame: 0,
-    teamGuessActivePlayer : null
+    teamGuessActivePlayer : null,
+    teamGuessScore: [0, 0]
 }
 
 const addMinutes = (string) => {
@@ -137,26 +138,19 @@ class Player {
     }
 
     playTeamGame() {
-        //set event listener on all the teams
+        
         console.log('Entered playTeamGame');
         console.log(this);
 
         $('.team-player-name').text(this.fullName);
 
         game.teamGuessActivePlayer = this;
-        $('.team-container').on('click', testGlobalFunction);
+        $('.team-container').on('click', teamGameLogic);
     
     }
-    // chooseTeam(event) {
-    //     console.log('Team Selected');
-    //     console.log('This: ', this);
-    //     console.log("event", event);
-    //     console.log('Target: ', event.target);
-    //     console.log('curr Tar: ', event.currentTaret);
-    // }
 }
 
-const testGlobalFunction = (event) => {
+const teamGameLogic = (event) => {
     console.log('Target: ', event.target);
     console.log('Clicked team ID = ',$(event.target).attr('teamid'));
     console.log('Player team ID = ',game.teamGuessActivePlayer.teamID);
@@ -166,17 +160,17 @@ const testGlobalFunction = (event) => {
 
     if(parseInt(clickedTeamID) === parseInt(playerTeamID)){
         console.log('Correct');
-
-        //end game - show modal, reset everything
-        //Add to score
+        gameOverModal('win');
+        game.teamGuessScore[0]++;
+        game.teamGuessScore[1]++;
     }
     else {
         console.log('Wrong!');
-        //end game - show modal, reset everything
-        //Add to score
+        gameOverModal('lose');
+        game.teamGuessScore[1]++;
     }
-    $('.team-container').off('click', testGlobalFunction);
-
+    $('.team-container').off('click', teamGameLogic);
+    $('.score-board').text(`Score: ${game.teamGuessScore[0]} of ${game.teamGuessScore[1]}`)
 }
 
 const getPlayerIDFromInput = (event) => {
@@ -354,11 +348,11 @@ const showPlayerComparison = () => {
             //If both are placed in answer area, evaluate if won or lost
             if(game.matchPlaced.every(e => e=== true)) {
                 if (game.matchAnswer.every( e=> e === true)){
-                    matchGameOver('win');
+                    gameOverModal('win');
 
                 }
                 else {
-                    matchGameOver('lose');
+                    gameOverModal('lose');
                 }
             }
         }   
@@ -369,13 +363,16 @@ const showPlayerComparison = () => {
     //Save any buttons we'll need later to game obj
 }
 
-const matchGameOver = (outcome) => {
+const gameOverModal = (outcome) => {
 
     if(outcome === 'win') {
         $('.modal-text').text("You win!");
     }
     else {
         $('.modal-text').text("You lose");
+        if(game.activeGame === 2){
+            $('.modal-text').text(`You lose, ${game.teamGuessActivePlayer.fullName} is on the ${game.teamGuessActivePlayer.teamName}.`)
+        }
     }
     $('.modal').show();
     $('.player1-option').draggable("destroy");
@@ -430,10 +427,12 @@ const createPlayerStatsElements = (playerElement, playerNum) => {
 const resetGame = () => {
     $('.modal').hide();
     $('.player-selected-list').empty();
+    $('.team-player-name').empty();
 
     game.playersInGame = [];
     game.matchAnswer = [false, false];
     game.matchPlaced = [false, false];
+    game.teamGuessActivePlayer = null;
 
     $('.player-options-container').remove();
     $('.player-stats-container').remove();
@@ -490,6 +489,7 @@ const setupMatchGame = () => {
 const setupTeamGame = () => {
     //Set code to use the Team Game code
     game.activeGame = 2;
+    game.teamGuessScore = [0, 0];
     
     //Clear any existing info and do a reset
     $('.input-container').empty();
@@ -540,7 +540,8 @@ const setupTeamGame = () => {
         $('.east-team').hide();
         $('.west-team').show();
     })
-
+    //Event listener to reset game from the win/loss modal
+    $('.reset-button').on('click', resetGame);
     //Add event listener to launch game on "Random Player" button
     $('.team-random-player').on('click', getSinglePlayerRandom);
 }
