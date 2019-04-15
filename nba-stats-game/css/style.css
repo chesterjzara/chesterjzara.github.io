@@ -2,12 +2,12 @@
     border: 1px solid black;
 }
 
+/* Main Sections */
 body {
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
 }
-
 .nav-menu-container {
     display: flex;
     flex-flow: row nowrap;
@@ -16,12 +16,25 @@ body {
     width: 90%;
     height: 15vh;
 }
-
 .game-area-container {
     width: 90%;
     height: 75vh;
 }
 
+/* Matching Game Inputs */
+.player-select-bottom {
+    display: flex;
+    flex-flow: row, nowrap;
+}
+.player-selected-container {
+    flex-basis: 75%
+}
+.match-option-buttons {
+    display: flex;
+    flex-flow: column wrap;
+}
+
+/* Matching Game Sections */
 .player-options-container {
     height: 19%;
     display: flex;
@@ -60,3 +73,25 @@ ul {
     list-style-type: none;
 }
 
+/* Modal For End Condition */
+.modal {
+	background-color: rgba(0,0,0,0.1);
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+    z-index: 1; 
+    display: none;
+}
+.modal-text-area {
+	background-color: white;
+	/* height: 40vh;
+	width: 80vw; */
+	border-radius: 2px;
+	margin: 100px auto;
+	box-shadow: 0 2px 2px rgba(0,0,0,0.2);
+	/* Adds shadow to the box and makes it look more 3D */
+	padding: 2%;
+	line-height: 3.5em;
+}

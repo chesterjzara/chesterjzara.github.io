@@ -8,7 +8,8 @@ const currSeason = 2018;
 const game = {
     playerCache : [],
     playersInGame : [],
-    correctAnswer: {}
+    matchPlaced: [false, false],
+    matchAnswer: [false, false]
 }
 
 const addMinutes = (string) => {
@@ -26,6 +27,16 @@ const addMinutes = (string) => {
     let ret = ( (min) + (sec/60)).toFixed(1);
 
     return parseFloat(ret);
+}
+
+const updateSelectedPlayerDisplay = () => {
+    $('.player-selected-list').empty();
+    let numPlayersSelected = game.playersInGame.length;
+    if(numPlayersSelected > 0){
+        for(let i = 0 ; i < numPlayersSelected; i++ ) {
+            $('.player-selected-list').append( $(`<li> ${game.playersInGame[i].fullName} added... </li>`) );
+        }
+    }
 }
 
 class Player {
@@ -56,9 +67,11 @@ class Player {
 
                 game.playerCache.push(this);
                 game.playersInGame.push(this);
-                game.correctAnswer[this.id] = false;
 
                 console.log('Players:', game.playersInGame);
+
+                //Refresh Display of selected players:
+                updateSelectedPlayerDisplay();
 
                 //TODO #2 - move this to its own button/event handler function
                     //Will be needed to support other player entry options (random/topX)
@@ -122,7 +135,6 @@ class Player {
 }
 
 
-
 const getPlayerIDFromInput = (event) => {
     console.log('Hit: player ID input function');
     //TODO - Add cache check here
@@ -131,6 +143,33 @@ const getPlayerIDFromInput = (event) => {
     let inputPlayerName = $('#player-input-box').val();
     //TODO - betteer parsing? - let parsedInputName = inputPlayerName.replace
     let searchParam = `?search=${inputPlayerName}`;
+    
+    //TODO - For Testing/Debugging
+    if(inputPlayerName === 'l'){
+        searchParam = `?search=lebron james`
+    }
+    if(inputPlayerName === 'k'){
+        searchParam = `?search=kevin durant`
+    }
+    apiCallPlayerName(searchParam);
+    //Reset form + prevent refresh:
+    event.preventDefault();
+    $(event.currentTarget).trigger('reset');
+}
+
+const getPlayersFromRandom = (event) => {
+    let ranPlayerName1 = playerNamesMasterList[Math.floor(Math.random() * playerNamesMasterList.length)];
+    let ranPlayerName2 = playerNamesMasterList[Math.floor(Math.random() * playerNamesMasterList.length)];
+    let searchStr = '?search='
+    apiCallPlayerName(searchStr + ranPlayerName1);
+    apiCallPlayerName(searchStr + ranPlayerName2);
+}
+
+const getPlayersFromTopX = (event) => {
+    
+}
+
+const apiCallPlayerName = (searchParam) => {
     
     $.ajax({
         url: playersUrl + searchParam
@@ -142,9 +181,8 @@ const getPlayerIDFromInput = (event) => {
             console.log('bad request');
         }
     );
-    //Reset form + prevent refresh:
-    event.preventDefault();
-    $(event.currentTarget).trigger('reset');
+   
+    
 };
 
 const buildPlayerFromID = (data) => {
@@ -160,6 +198,7 @@ const buildPlayerFromID = (data) => {
     
     let newPlayer = new Player(playerID, firstName, lastName, teamID, teamName);
     newPlayer.getCurrSeasonStats();
+
 
    
 }
@@ -189,8 +228,6 @@ const showPlayerComparison = () => {
         }
     })
     
-
-
     //Randomize which player is 1 and 2 and reassign new P1/P2 variable to use for display
     if ( Math.random() >= 0.5) {
         [game.playersInGame[0], game.playersInGame[1]] = [game.playersInGame[1],game.playersInGame[0]];
@@ -220,40 +257,68 @@ const showPlayerComparison = () => {
                 of: $(this)
             });
             
+            //Get which stats container we are testing
+            let optionNum = null;
+            let $option = $(ui.draggable)
+            console.log($option);
+            if ($option.hasClass('player1-option')){
+                optionNum = 0;
+            }
+            else if ($option.hasClass('player2-option')){
+                optionNum = 1;
+            }
+            else {
+                optionNum = null;
+            }
 
-            //Issues here 
-                //Need lose condition
+            //Get which player option was moved and which answer area it was placed in.
             let dragAnswer = $(ui.draggable).attr('playerID');
             let dropAnswer = $(this).attr('playerID');
-            if (dragAnswer === dropAnswer) {
-                console.log('Correct Answer in: ', $(this));
-                game.correctAnswer[dragAnswer] = true;
-
-                let bothCorrect = true;
-                for(let playerKey in game.correctAnswer) {
-                    if(!game.correctAnswer[playerKey]){
-                        bothCorrect = false;
-                    }
-                }
-
-                if(bothCorrect){
-                    console.log('Both players placed correctly');
-                    
-                    let $winnerModal
-
-                    //$('.player-options-container').append($('<p> You win! </p>'));
-                        //Putting it here actually messes up the Draggable divs, use modal instead
-                }
-
+            //If placed in answer zone - add to placedArray
+                //else, remove
+            if($(this).hasClass('name-answer')){
+                game.matchPlaced[optionNum] = true;
             }
-        }
+            else {
+                game.matchPlaced[optionNum] = false;
+            }
+            //Check if answer for this element is right - add to answerArray
+                //If wrong mark false
+            if(dragAnswer === dropAnswer) {
+                game.matchAnswer[optionNum] = true
+            }
+            else {
+                game.matchAnswer[optionNum] = false;
+            }
+            //If both are placed in answer area, evaluate if won or lost
+            if(game.matchPlaced.every(e => e=== true)) {
+                if (game.matchAnswer.every( e=> e === true)){
+                    matchGameOver('win');
+
+                }
+                else {
+                    matchGameOver('lose');
+                }
+            }
+        }   
     });
     //Info on draggable from jQuery UI docs, https://codepen.io/jyloo/pen/GjbmLm, https://stackoverflow.com/questions/26746823/jquery-ui-drag-and-drop-snap-to-center
     //Using http://touchpunch.furf.com/ for mobile compatibility with jQuery drag/drop 
-
-    
   
     //Save any buttons we'll need later to game obj
+}
+
+const matchGameOver = (outcome) => {
+
+    if(outcome === 'win') {
+        $('.modal-text').text("You win!");
+    }
+    else {
+        $('.modal-text').text("You lose");
+    }
+    $('.modal').show();
+    $('.player1-option').draggable("destroy");
+    $('.player2-option').draggable("destroy");
 }
 
 const createPlayerStatsElements = (playerElement, playerNum) => {
@@ -298,17 +363,34 @@ const createPlayerStatsElements = (playerElement, playerNum) => {
 
     playerElement.append($statSect1).append($statSect2).append($statSect3)
 
+}
+
+const resetGame = () => {
+    $('.modal').hide();
+    $('.player-selected-list').empty();
+
+    game.playersInGame = [];
+    game.matchAnswer = [false, false];
+    game.matchPlaced = [false, false];
+
+    $('.player-options-container').remove();
+    $('.player-stats-container').remove();
 
 }
 
-
 $( () => {
     //getPlayerSeasonStats(145, 2018)
+
+    $('#player-input-box').autocomplete({
+        source: playerNamesMasterList
+    });
+
 
     //Get buttons we'll need
     game.$playerOptionsCont = $('.player-options-container');
 
     $('.player-form').on('submit', getPlayerIDFromInput);
-
+    $('.reset-button').on('click', resetGame);
+    $('.random-button').on('click', getPlayersFromRandom);
    
 })

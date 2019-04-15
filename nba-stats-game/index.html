@@ -8,10 +8,16 @@
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" charset="utf-8"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" charset="utf-8"></script>
         <script src="js/jquery.ui.touch-punch.min.js"></script>
-        <script src="js/exampleData.js" charset="utf-8"></script>
+        <script src="js/playerRanking.js" charset="utf-8"></script>
         <script src="js/app.js" charset="utf-8"></script>
     </head>
     <body>
+        <div class="modal">
+            <div class="modal-text-area">
+                <h1 class="modal-text"></h1>
+                <button class='reset-button'>Reset</button>
+            </div>
+        </div>
         <h1>NBA Stats App</h1>
         <div class="nav-menu-container">
             <div class="player-comparison">
@@ -28,46 +34,25 @@
             <form class="player-form">
                 <input type="text" id="player-input-box" placeholder="Player Name"/>
                 <input type="submit" value="Choose Player"/>
+                
             </form>
-            <button class="top-x-button">Top X</button>
-            <button class="random-button">Random</button>
+            <div class="player-select-bottom">
+                <div class="player-selected-container">
+                    <ol class="player-selected-list">
+                        <!-- <li>Lebron added...</li>
+                        <li>Snake added...</li> -->
+                    </ol>
+                </div>
+                <div class="match-option-buttons">
+                    <button class="top-x-button">Top X</button>
+                    <button class="random-button">Random</button>
+                    <button class='reset-button'>Reset</button>
+                </div>
+            </div>
         </div>
 
         <div class="game-area-container">
-            <!-- <div class="player-options-container">
-                <div class="player1-option">Player 1</div>
-                <div class="player2-option">Player 2</div> 
-            </div> -->
-            <!-- <div class="player-stats-container"> -->
-                <!-- <div class="player1-stats-container">
-                    <img src="??" alt="">
-                    <div class="p1-drag-name"></div>
-                     <div class="stat-pts">
-                        <ul>
-                            <li><span>Pts: 27.6</span></li>
-                            <li>FG: 46% (6/13)</li>
-                            <li>3P: 33% (1/3)</li>
-                            <li>FT: 75% (3/4)</li>
-                        </ul>
-                    </div> 
-                    <div class="stat-reb-min">
-                        <ul>
-                            <li class="desktop-only"><span>Reb: 8</span></li>
-                            <li class="desktop-only">OReb: 1</li>
-                            <li class="desktop-only">DReb: 7</li>
-                            <li><span>Reb: 8 (1/7)</span></li>
-                        </ul>
-                    </div>
-                    <div class="stat-ast-def">
-                        <ul>
-                            <li><span>Ast: 5</span></li>
-                            <li><span>Stl: 1.2</span></li>
-                            <li><span>Blk: 2</span></li>
-                        </ul>
-                    </div>
-                </div> -->
-                <!-- <div class="player2-stats-container"></div> -->
-            </div>
+
         </div>
 
         
