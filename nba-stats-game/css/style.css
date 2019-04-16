@@ -1,7 +1,9 @@
 * {
     border: 1px solid black;
 }
-
+h1{
+    margin: 0.25em auto 0.2em auto;
+}
 /* Main Sections */
 body {
     display: flex;
@@ -12,13 +14,25 @@ body {
     display: flex;
     flex-flow: row nowrap;
 }
+.nav-menu-container > * {
+    padding: 0.5em;
+    text-align: center;
+    font-size: 1.2em;
+    flex-shrink: 3;
+}
+.player-team {
+    flex-grow: 2;
+    flex-shrink: 1;
+    flex-basis: 33%;
+    width: 33%
+}
 .input-container {
     width: 90%;
     height: 15vh;
 }
 .game-area-container {
     width: 90%;
-    height: 75vh;
+    height: 65vh;
 }
 
 /* Matching Game Inputs */
@@ -112,7 +126,7 @@ ul {
 }
 .team-container > * {
     width: 30%;
-    height: 13vh;
+    height: 12vh;
     /* background: url("../img/teams/atl-hawks.png"); */
     background-size: contain;
     background-repeat: no-repeat;

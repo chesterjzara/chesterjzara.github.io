@@ -546,12 +546,16 @@ const setupTeamGame = () => {
     $('.team-random-player').on('click', getSinglePlayerRandom);
 }
 
+const setupAboutInfo= () => {
+    
+}
+
 $( () => {
     //getPlayerSeasonStats(145, 2018)
 
     
-    $('.player-comparison').on('click', setupMatchGame)
-
-    $('.player-team').on('click', setupTeamGame)
+    $('.player-comparison').on('click', setupMatchGame);
+    $('.player-team').on('click', setupTeamGame);
+    $('.about-info').on('click', setupAboutInfo)
 
 })
