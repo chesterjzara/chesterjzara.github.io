@@ -12,7 +12,24 @@ const game = {
     matchAnswer: [false, false],
     activeGame: 0,
     teamGuessActivePlayer : null,
-    teamGuessScore: [0, 0]
+    teamGuessScore: [0, 0],
+    currentSeason : 2018,
+    playerHeadshotObj: []
+}
+
+const processNBAOfficialData = (dataObj) => {
+    let retObj = [];
+    let allPlayerArr = dataObj["data"]["players"]
+
+    for (let i = 0; i < allPlayerArr.length; i++){
+        if (allPlayerArr[i][4] === game.currentSeason) {
+            //let playerHeadShotURL = `http://stats.nba.com/media/players/230x185/${allPlayerArr[i][0]}.png`
+            let playerHeadShotURL = `https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/${allPlayerArr[i][0]}.png`;
+            allPlayerArr[i].push(playerHeadShotURL);
+            retObj[allPlayerArr[i][1]] = allPlayerArr[i];
+        }
+    }
+    return retObj;
 }
 
 const addMinutes = (string) => {
@@ -144,6 +161,28 @@ class Player {
 
         $('.team-player-name').text(this.fullName);
 
+        let nbaDataName = this.lastName + ", " + this.firstName;
+        
+        if(game.playerHeadshotObj[nbaDataName] !== undefined) {
+            let playerHeadshotURL = game.playerHeadshotObj[nbaDataName][7];
+            console.log(playerHeadshotURL);
+            $('.team-player-image').append( $("<img>").attr('src', playerHeadshotURL) );
+
+            // $('.team-player-name').css({
+            //     'background': `url('${playerHeadshotURL}')`,
+            //     'background-size' : '50%',
+            //     'background-repeat' : 'no-repeat',
+            //     'background-position-x' : '90%',
+            //     'background-position-y': '-20%'
+            // });
+        }
+        else {
+            $('.team-player-name').css( 'background', `url('https://stats.nba.com/media/img/league/nba-headshot-fallback.png')`);
+        }
+        
+
+        
+
         game.teamGuessActivePlayer = this;
         $('.team-container').on('click', teamGameLogic);
     
@@ -171,6 +210,7 @@ const teamGameLogic = (event) => {
     }
     $('.team-container').off('click', teamGameLogic);
     $('.score-board').text(`Score: ${game.teamGuessScore[0]} of ${game.teamGuessScore[1]}`)
+    $('.team-player-image').empty();
 }
 
 const getPlayerIDFromInput = (event) => {
@@ -218,7 +258,8 @@ const getPlayersFromTopX = (event) => {
 }
 
 const apiCallPlayerName = (searchParam) => {
-    
+    console.log('API Call on', searchParam);
+
     $.ajax({
         url: playersUrl + searchParam
     }).then(
@@ -428,6 +469,7 @@ const resetGame = () => {
     $('.modal').hide();
     $('.player-selected-list').empty();
     $('.team-player-name').empty();
+    $('.team-player-image').empty();
 
     game.playersInGame = [];
     game.matchAnswer = [false, false];
@@ -501,8 +543,10 @@ const setupTeamGame = () => {
     $('.input-container').append($teamInput);
     $teamInput.append ($('<div>').addClass('team-random-player').text('Random Player') );
     $teamInput.append ($('<div>').addClass('score-board').text('Score: 0 of 0') );
-    $teamInput.append ($('<div>').addClass('hint-button').text('Hint') );
-    $('.input-container').append( $('<div>').addClass('team-player-name') );
+
+    $('.input-container').append( $('<div>').addClass('team-player-container') );
+    $('.team-player-container').append( $('<div>').addClass('team-player-name') );
+    $('.team-player-container').append( $('<div>').addClass('team-player-image') );
 
     //Add conference select elements in game container
     $conferenceSelect = $('<div>').addClass('conference-select');
@@ -552,7 +596,7 @@ const setupAboutInfo= () => {
 
 $( () => {
     //getPlayerSeasonStats(145, 2018)
-
+    game.playerHeadshotObj = processNBAOfficialData(stats_ptsd);
     
     $('.player-comparison').on('click', setupMatchGame);
     $('.player-team').on('click', setupTeamGame);

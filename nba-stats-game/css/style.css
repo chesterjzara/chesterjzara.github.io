@@ -13,26 +13,27 @@ body {
 .nav-menu-container {
     display: flex;
     flex-flow: row nowrap;
+    width: 60%;
 }
 .nav-menu-container > * {
     padding: 0.5em;
     text-align: center;
     font-size: 1.2em;
-    flex-shrink: 3;
+    flex-grow: 1;
 }
-.player-team {
+/* .player-team {
     flex-grow: 2;
     flex-shrink: 1;
     flex-basis: 33%;
     width: 33%
-}
+} */
 .input-container {
     width: 90%;
-    height: 15vh;
+    height: 20vh;
 }
 .game-area-container {
     width: 90%;
-    height: 65vh;
+    height: 60vh;
 }
 
 /* Matching Game Inputs */
@@ -95,7 +96,7 @@ ul {
 	left: 0;
 	height: 100%;
 	width: 100%;
-    z-index: 1; 
+    z-index: 999; 
     display: none;
 }
 .modal-text-area {
@@ -117,7 +118,16 @@ ul {
 }
 .conference-select > div{
     flex-basis: 50%;
-    text-align: center
+    text-align: center;
+    padding: 1em 0;
+    z-index: 99;
+    color: white;
+}
+.eastern-conf {
+    background-color: rgb(214, 60, 60);
+}
+.western-conf {
+    background-color: rgb(54, 82, 238);
 }
 .team-container{
     display: flex;
@@ -126,7 +136,7 @@ ul {
 }
 .team-container > * {
     width: 30%;
-    height: 12vh;
+    height: 10vh;
     /* background: url("../img/teams/atl-hawks.png"); */
     background-size: contain;
     background-repeat: no-repeat;
@@ -139,4 +149,65 @@ ul {
 }
 .team-input > div {
     flex-basis: 49%;
+    box-sizing: border-box;
+    padding: 0.75em 0.7em;
+    font-size: 2vh;
+}
+.team-player-container {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    height: 13vh;
+}
+.team-player-name {
+    /* background: url(https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/1626245.png); */
+    /*     background-size: 50%;
+    background-repeat: no-repeat;
+    background-position-x: 90%;
+    background-position-y: -20%; */
+    flex-grow: 2;
+    width: 35%;
+    box-sizing: border-box;
+    padding: 2vh 1.5vh;
+    text-align: center;
+    font-size: 5vw;
+}
+.team-player-image > img{
+    clip-path: inset(0px 0px 56px 0px);
+    max-width: 88%;
+} 
+
+/* Browser less than 400px */
+@media only screen and (max-width: 400px) {
+    .team-player-image > img{
+        clip-path: inset(0px 0px 45px 0px);
+    }
+}
+@media only screen and (min-width: 1050px) {
+    .team-player-image > img{
+        clip-path: inset(0px 0px 56px 0px);
+        max-width: 100%;
+    } 
+    .input-container {
+        width: 90%;
+        height: 17vw;
+    }
+    .team-player-container {
+        width: 90%;
+        height: 10vw;
+    }
+    .team-player-name{
+        flex-grow: 1;
+        flex-basis: 30%;
+        box-sizing: border-box;
+        padding: 2vh 1.5vh;
+        text-align: center;
+        font-size: 5vw;
+    }
+    .team-input > div {
+        flex-basis: 49%;
+        box-sizing: border-box;
+        padding: 0.75em 0.7em;
+        font-size: 2vw;
+    }
 }
