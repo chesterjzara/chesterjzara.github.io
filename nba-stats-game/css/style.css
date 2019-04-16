@@ -1,6 +1,11 @@
 * {
     border: 1px solid black;
 }
+body{
+    background: url('../img/hardwood.jpg');
+    /* http://terrasseenboise.blogspot.com/2016/05/basketball-floor-texture.html */
+    background-repeat: repeat;
+}
 h1{
     margin: 0.25em auto 0.2em auto;
 }
@@ -20,6 +25,10 @@ body {
     text-align: center;
     font-size: 1.2em;
     flex-grow: 1;
+}
+.nav-menu-container > div > a {
+    color: black;
+    text-decoration: none;
 }
 /* .player-team {
     flex-grow: 2;
@@ -62,10 +71,12 @@ body {
     text-align: center;
 }
 .player1-option {
-    background-color: rgba(243, 45, 45, 0.8)
+    background-color: rgba(243, 45, 45, 1);
+    color: white;
 }
 .player2-option {
-    background-color: rgba(46, 50, 243, 0.8)
+    background-color: rgba(46, 50, 243, 0.8);
+    color: white;
 }
 .player-stats-container {
     height: 79%;
@@ -98,6 +109,7 @@ ul {
 	width: 100%;
     z-index: 999; 
     display: none;
+    width: 100%;
 }
 .modal-text-area {
 	background-color: white;
@@ -108,7 +120,8 @@ ul {
 	box-shadow: 0 2px 2px rgba(0,0,0,0.2);
 	/* Adds shadow to the box and makes it look more 3D */
 	padding: 2%;
-	line-height: 3.5em;
+    line-height: 3.5em;
+    width: 80%;
 }
 
 /* Team Guess Game */
