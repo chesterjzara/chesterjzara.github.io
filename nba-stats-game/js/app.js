@@ -17,6 +17,15 @@ const game = {
     playerHeadshotObj: []
 }
 
+const checkURLParameters = () => {
+    let returnParams = {};
+    let parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        returnParams[key] = value;
+    });
+    return returnParams;
+}
+// Got info on how to do this from https://html-online.com/articles/get-url-parameters-javascript/ and https://css-tricks.com/snippets/javascript/get-url-and-url-parts-in-javascript/
+
 const processNBAOfficialData = (dataObj) => {
     let retObj = [];
     let allPlayerArr = dataObj["data"]["players"]
@@ -278,12 +287,23 @@ const buildPlayerFromID = (data) => {
 
     //Todo - handle error if more than 1 result returned
     console.log(data);
+    let playerID, firstName, lastName, teamID, teamName;
 
-    let playerID = data["data"][0]["id"]
-    let firstName = data["data"][0]["first_name"]
-    let lastName = data["data"][0]["last_name"]
-    let teamID = data["data"][0]["team"]["id"]
-    let teamName = data["data"][0]["team"]["full_name"]
+    if(data['data']) {
+        playerID = data["data"][0]["id"];
+        firstName = data["data"][0]["first_name"];
+        lastName = data["data"][0]["last_name"];
+        teamID = data["data"][0]["team"]["id"];
+        teamName = data["data"][0]["team"]["full_name"];
+    }
+    else if(data['id']) {
+        playerID = data["id"];
+        firstName = data["first_name"]
+        lastName = data["last_name"]
+        teamID = data["team"]["id"]
+        teamName = data["team"]["full_name"]
+    }
+
     
     let newPlayer = new Player(playerID, firstName, lastName, teamID, teamName);
     
@@ -406,13 +426,40 @@ const showPlayerComparison = () => {
 
 const gameOverModal = (outcome) => {
 
+    //Reset the URL to the base website url - prevents reloading URL players on refresh
+    let url = window.location.href;
+    let urlParams = url.substring( 0, url.indexOf('?') ); 
+    if(window.history.pushState) {
+        window.history.pushState( {id: 'home'}, '', urlParams )
+    }
+
+
     if(game.activeGame === 1){
         $('.headshot-image').css('display', 'none');
         $('.headshot-image-real').css('display', 'block');
+    
+        //Share matchup link
+        let baseURL = window.location.href
+        let players = game.playersInGame
+        let p1 = game.playersInGame[0]['id']
+        let p2 = game.playersInGame[1]['id']
+        let link = `${baseURL}?gamemode=1&p1=${p1}&p2=${p2}`;
+        
+        let $linkTag = $('<a>').text(link).attr('href', link);
+        let $shareP = $('<p>').text('Share this comparison with the following link:')
+        
+        $('.modal-text-area').append($shareP);
+        $('.modal-text-area').append($linkTag);
+
     }
+
+    
+
+    
 
     if(outcome === 'win') {
         $('.modal-text').text("You win!");
+
     }
     else {
         $('.modal-text').text("You lose");
@@ -461,8 +508,6 @@ const createPlayerStatsElements = (playerElement, playerNum) => {
     playerElement.append($headshot);
     playerElement.append($headshotHidden);
     
-    //TODO #1 - for testing - remove Name from final, this should just be the draggable location
-    //playerElement.append($('<div>').text(game.playersInGame[playerNum].fullName).addClass('player-name-drop name-answer').attr('playerID', game.playersInGame[playerNum]['id']));
     playerElement.append($('<div>').addClass('player-name-drop name-answer').attr('playerID', game.playersInGame[playerNum]['id']));
 
     formatStats(playerObj);
@@ -502,7 +547,12 @@ const createPlayerStatsElements = (playerElement, playerNum) => {
 }
 
 const resetGame = () => {
+    
     $('.modal').hide();
+    if( $('.modal-text-area').children().length > 2) {
+        $('.modal-text-area').children().last().remove();
+        $('.modal-text-area').children().last().remove();
+    }
     $('.player-selected-list').empty();
     $('.team-player-name').empty();
     $('.team-player-image').empty();
@@ -634,14 +684,50 @@ const setupAboutInfo= () => {
     
 }
 
+const playGameFromURL = () => {
+    let urlParams = checkURLParameters();
+
+    if(urlParams){
+        if(urlParams['gamemode'] === '1') {
+            if(urlParams['p1'] && urlParams['p2']){
+                
+                setupMatchGame();
+
+                let p1 = `/${urlParams['p1']}`;
+                let p2 = `/${urlParams['p2']}`;
+                apiCallPlayerName(p1);
+                apiCallPlayerName(p2);
+
+                // let url = window.location.href;
+                // let urlParams = url.splice( url.indexOf('?'), url.length - url.indexOf('?') ); 
+                // window.history.pushState( {}, 'Test Title', '')
+            }
+            else {
+                console.log('Selected Player Comp game but bad player params');
+            }
+        }
+        else if(urlParams['gamemode'] === 2) {
+
+        }
+        else {
+            console.log('Incorrect Parameters - no gamemode specified');
+        }
+    }
+    else {
+        console.log('No valid parameters entered');
+    }
+}
+
 $( () => {
     //getPlayerSeasonStats(145, 2018)
     game.playerHeadshotObj = processNBAOfficialData(stats_ptsd);
     
+    playGameFromURL();
+
     $('.player-comparison').on('click', setupMatchGame);
     $('.player-team').on('click', setupTeamGame);
     $('.about-info').on('click', setupAboutInfo)
     
     //Reset the game from clicking anywhere on the modal
-    $('.modal').on('click', resetGame);
+    //$('.modal').on('click', resetGame);
 })
