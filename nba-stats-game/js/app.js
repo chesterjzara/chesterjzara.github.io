@@ -179,6 +179,10 @@ class Player {
         console.log('Entered playTeamGame');
         console.log(this);
 
+        //Update Scoreboard then increment number of games
+        $('.score-board').text(`Score: ${game.teamGuessScore[0]} of ${game.teamGuessScore[1]}`)
+        game.teamGuessScore[1]++;
+
         $('.team-player-name').text(this.fullName);
 
         let nbaDataName = this.lastName + ", " + this.firstName;
@@ -193,13 +197,12 @@ class Player {
             //Todo - update this to use the silohoutee 
             $('.team-player-name').css( 'background', `url('https://stats.nba.com/media/img/league/nba-headshot-fallback.png')`);
         }
-        
-
-        
-
+        //Set the current active players to the Player instance we've created
         game.teamGuessActivePlayer = this;
+
+        //Remove previous listener on the Team Icons to avoid double-counting, before adding new one
+        $('.team-container').off('click', teamGameLogic);
         $('.team-container').on('click', teamGameLogic);
-    
     }
 }
 
@@ -215,12 +218,10 @@ const teamGameLogic = (event) => {
         console.log('Correct');
         gameOverModal('win');
         game.teamGuessScore[0]++;
-        game.teamGuessScore[1]++;
     }
     else {
         console.log('Wrong!');
         gameOverModal('lose');
-        game.teamGuessScore[1]++;
     }
     $('.team-container').off('click', teamGameLogic);
     $('.score-board').text(`Score: ${game.teamGuessScore[0]} of ${game.teamGuessScore[1]}`)
@@ -302,7 +303,8 @@ const apiCallPlayerName = (searchParam) => {
             
         },
         () => {
-            console.log('bad request');
+            console.log('API Request Failed');
+            $('.player-selected-list').append( $('<li>').text('Unable to process request at this time, please wait.') );
         }
     );
    
@@ -640,6 +642,11 @@ const resetGame = () => {
     $('.team-player-name').css('background', '');
 
 }
+const resetScoreBoard = () => {
+
+    game.teamGuessScore = [0, 0];
+    $('.score-board').text(`Score: ${game.teamGuessScore[0]} of ${game.teamGuessScore[1]}`);
+}
 
 const setupMatchGame = () => {
     //Set the code to use the Matching Game 
@@ -686,6 +693,7 @@ const setupMatchGame = () => {
     $('#player-input-box').autocomplete({
         source: playerNamesMasterList
     });
+    $('.score-board').on('click', resetScoreBoard);
 }
 
 const setupTeamGame = () => {
@@ -751,6 +759,7 @@ const setupTeamGame = () => {
 
     //Add event listener to launch game on "Random Player" button
     $('.team-random-player').on('click', getSinglePlayerRandom);
+    $('.score-board').on('click', resetScoreBoard);
 }
 
 const setupAboutInfo= () => {
