@@ -281,8 +281,25 @@ const apiCallPlayerName = (searchParam) => {
     $.ajax({
         url: playersUrl + searchParam
     }).then(
-        (data) => {
-            buildPlayerFromID(data);
+        (apiData) => {
+            
+            //If there is no 'data' key in the API data, the noData is true
+            //If there is a 'data' key AND it has NBA player info within (length > 0), the noData is false
+            let noData = true; 
+            if('data' in apiData){
+                if (apiData['data'].length > 0){
+                    noData = false;
+                }
+            }
+            //If the noData flag from above is true AND the 'id' key is also missing from the API data, this means that either method of player lookup (by name or ID respecitvely) has failed
+            if(noData && !apiData['id']) {
+                console.log('Bad search entry');
+                $('.player-selected-list').append( $('<li>').text('Unable to find player entered, try again') );
+            }
+            else {
+                buildPlayerFromID(apiData);
+            }
+            
         },
         () => {
             console.log('bad request');
@@ -363,8 +380,8 @@ const showPlayerComparison = () => {
     //Display Stats Section
     let $playerStatsContainer = $('<div>').addClass('player-stats-container');
     $('.game-area-container').append($playerStatsContainer);
-    $player1StatsContainer = $('<div>').addClass('player1-stats-container');
-    $player2StatsContainer = $('<div>').addClass('player2-stats-container');
+    $player1StatsContainer = $('<div>').addClass('player1-stats-container ');  //test-drop
+    $player2StatsContainer = $('<div>').addClass('player2-stats-container '); //test-drop
     $($playerStatsContainer).append($player1StatsContainer).append($player2StatsContainer);
 
     //Call function to add image + stats for each player
@@ -372,6 +389,7 @@ const showPlayerComparison = () => {
     createPlayerStatsElements($player2StatsContainer, 1);
 
     //Allow the player names to be dropped in the center of the player stats container
+    //removed - .test-drop
     $('.player-name-drop').droppable({
         scope: 'playerName',
         drop: function(event, ui) {
@@ -380,6 +398,7 @@ const showPlayerComparison = () => {
                 my: "center",
                 at: "center",
                 of: $(this)
+                //.children('.player-name-drop')
             });
             
             //Get which stats container we are testing
@@ -467,6 +486,25 @@ const gameOverModal = (outcome) => {
         }) 
         //Copy paste info - https://www.w3schools.com/howto/howto_js_copy_clipboard.asp
     }
+    if(game.activeGame === 2) {
+        //Share matchup link
+        let baseURL = window.location.href
+        let player = game.teamGuessActivePlayer['id'];
+        let link = `${baseURL}?gamemode=2&p=${player}`;
+        
+        let $linkTag = $('.share-link').text('team guess challenge').attr('href', link);
+        let $copyButton = $('.copy-button');
+        $('.share-text').append($copyButton);
+
+        $copyButton.on('click', (event) => {
+            $copyTag = $('<input>').val( $('.share-link').attr('href') );
+            $('body').append($copyTag);
+            $copyTag.select();
+            document.execCommand("copy");
+            console.log('copied');
+            $copyTag.remove();
+        }) 
+    }
 
     if(outcome === 'win') {
         $('.modal-text').text("You win!");
@@ -547,7 +585,7 @@ const createPlayerStatsElements = (playerElement, playerNum) => {
 
     //Create Stat Sub-sections (pts / reb+min / ast+stl+blk)
     //Section 1 - Pts, FG%, 3P%, FT%
-    let $statSect1 = $('<div>').addClass('stat-1');
+    let $statSect1 = $('<div>').addClass('stat-1 stat-box');
     let $ul1 = $('<ul>');
     $statSect1.append($ul1);
     let $liPts = $('<li>').append($('<span>').addClass('main-stat').text(`Pts: ${statDisp['pts']}`));
@@ -558,7 +596,7 @@ const createPlayerStatsElements = (playerElement, playerNum) => {
 
     //Section 2 - Rebounds + Minutes
     //TODO #3 - add Oreb and Dreb with class like "desktop-only" to hide in mobile view
-    let $statSect2 = $('<div>').addClass('stat-2');
+    let $statSect2 = $('<div>').addClass('stat-2 stat-box');
     let $ul2 = $('<ul>');
     $statSect2.append($ul2);
     let $liReb = $('<li>').append($('<span>').addClass('main-stat').text(`Reb: ${statDisp['reb']}`));
@@ -566,7 +604,7 @@ const createPlayerStatsElements = (playerElement, playerNum) => {
     $ul2.append($liReb).append($liMin);
 
     //Section 3 - Ast, Stl, Blk
-    let $statSect3 = $('<div>').addClass('stat-3');
+    let $statSect3 = $('<div>').addClass('stat-3 stat-box');
     let $ul3 = $('<ul>');
     $statSect3.append($ul3);
     let $liAst = $('<li>').append($('<span>').addClass('main-stat').text(`Ast: ${statDisp['ast']}`));
@@ -623,7 +661,7 @@ const setupMatchGame = () => {
     } ));
      $form.append( $('<input>').attr( {
         'type' : 'submit',
-        'value' : "Choose Player",
+        'value' : "Add",
     } ));
 
     //player-select-bottom
@@ -709,6 +747,8 @@ const setupTeamGame = () => {
     //Event listener to reset game from the win/loss modal
     $('.reset-button').on('click', resetGame);
     //$('.modal').on('click', resetGame);
+
+
     //Add event listener to launch game on "Random Player" button
     $('.team-random-player').on('click', getSinglePlayerRandom);
 }
@@ -739,7 +779,14 @@ const playGameFromURL = () => {
                 console.log('Selected Player Comp game but bad player params');
             }
         }
-        else if(urlParams['gamemode'] === 2) {
+        else if(urlParams['gamemode'] === '2') {
+            if(urlParams['p']){
+                setupTeamGame();
+
+                let player = `/${urlParams['p']}`;
+                apiCallPlayerName(player);
+
+            }
 
         }
         else {
