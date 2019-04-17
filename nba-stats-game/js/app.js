@@ -14,7 +14,8 @@ const game = {
     teamGuessActivePlayer : null,
     teamGuessScore: [0, 0],
     currentSeason : 2018,
-    playerHeadshotObj: []
+    playerHeadshotObj: [],
+    wasSwapped : null
 }
 
 const checkURLParameters = () => {
@@ -382,15 +383,18 @@ const showPlayerComparison = () => {
         }
     })
     //Randomize which player is 1 and 2 and reassign new P1/P2 variable to use for display
+    //Track if the players were swapped so we can put the right one in the right location at the end
+    game.wasSwapped = false;
     if ( Math.random() >= 0.5) {
         [game.playersInGame[0], game.playersInGame[1]] = [game.playersInGame[1],game.playersInGame[0]];
+        game.wasSwapped = true;
     }
 
     //Display Stats Section
     let $playerStatsContainer = $('<div>').addClass('player-stats-container');
     $('.game-area-container').append($playerStatsContainer);
-    $player1StatsContainer = $('<div>').addClass('player1-stats-container ');  //test-drop
-    $player2StatsContainer = $('<div>').addClass('player2-stats-container '); //test-drop
+    $player1StatsContainer = $('<div>').addClass('player1-stats-container stat-drop');  //dtd - added class stat-drop
+    $player2StatsContainer = $('<div>').addClass('player2-stats-container stat-drop');  //dtd - added class stat-drop
     $($playerStatsContainer).append($player1StatsContainer).append($player2StatsContainer);
 
     //Call function to add image + stats for each player
@@ -398,16 +402,15 @@ const showPlayerComparison = () => {
     createPlayerStatsElements($player2StatsContainer, 1);
 
     //Allow the player names to be dropped in the center of the player stats container
-    //removed - .test-drop
-    $('.player-name-drop').droppable({
+    $('.stat-drop').droppable({  //dtd .stat-drop - was .player-name-drop
         scope: 'playerName',
         drop: function(event, ui) {
             $('.draggable-player').draggable("option", "revert", false)
             $(ui.draggable).position({
                 my: "center",
                 at: "center",
-                of: $(this)
-                //.children('.player-name-drop')
+                of: $(this).children('.player-name-drop')
+                //dtd .children('.player-name-drop') - was $(this)
             });
             
             //Get which stats container we are testing
@@ -426,10 +429,10 @@ const showPlayerComparison = () => {
 
             //Get which player option was moved and which answer area it was placed in.
             let dragAnswer = $(ui.draggable).attr('playerID');
-            let dropAnswer = $(this).attr('playerID');
+            let dropAnswer = $(this).children('.player-name-drop').attr('playerID');        //dtd .children('.player-name-drop') was - $(this).attr...
             //If placed in answer zone - add to placedArray
                 //else, remove
-            if($(this).hasClass('name-answer')){
+            if($(this).children('.player-name-drop').hasClass('name-answer')){            //dtd .children('.player-name-drop') - was $(this).hasClass..
                 game.matchPlaced[optionNum] = true;
             }
             else {
@@ -537,15 +540,28 @@ const gameOverModal = (outcome) => {
         $('.modal-text').text("You lose");
         //If Player Comparison - also swap the player names to their correct location
         if(game.activeGame === 1){
+            
+            //New from dtd project
+            let $player1end, $player2end
+            if(game.wasSwapped){
+                $player1end = $('.name-drop-2');
+                $player2end = $('.name-drop-1');
+            }
+            else {
+                $player1end = $('.name-drop-1');
+                $player2end = $('.name-drop-2');
+            }
+            
+            
             $('.player1-option').position({
                 my: "center",
                 at: "center",
-                of: $('.name-drop-2')
+                of: $player1end                 //dtd
             });
             $('.player2-option').position({
                 my: "center",
                 at: "center",
-                of: $('.name-drop-1')
+                of: $player2end                 //dtd
             });
         }
         //If Team Guessing - give the correct team when guessed wrong
