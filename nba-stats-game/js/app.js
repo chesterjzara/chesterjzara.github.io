@@ -432,7 +432,7 @@ const gameOverModal = (outcome) => {
     if(window.history.pushState) {
         window.history.pushState( {id: 'home'}, '', urlParams )
     }
-
+    //Info from https://stackoverflow.com/questions/824349/how-do-i-modify-the-url-without-reloading-the-page
 
     if(game.activeGame === 1){
         $('.headshot-image').css('display', 'none');
@@ -440,16 +440,21 @@ const gameOverModal = (outcome) => {
     
         //Share matchup link
         let baseURL = window.location.href
-        let players = game.playersInGame
         let p1 = game.playersInGame[0]['id']
         let p2 = game.playersInGame[1]['id']
         let link = `${baseURL}?gamemode=1&p1=${p1}&p2=${p2}`;
         
-        let $linkTag = $('<a>').text(link).attr('href', link);
-        let $shareP = $('<p>').text('Share this comparison with the following link:')
-        
-        $('.modal-text-area').append($shareP);
-        $('.modal-text-area').append($linkTag);
+        let $linkTag = $('.share-link').text('comparison').attr('href', link);
+        let $copyButton = $('.copy-button');
+        $('.share-text').append($copyButton);
+
+        $copyButton.on('click', function (event) {
+            $copyTag = $('<input>').val( $('.share-link').attr('href') );
+            $('body').append($copyTag);
+            $copyTag.select();
+            document.execCommand("copy");
+            $copyTag.remove();
+        })
 
     }
 
@@ -463,7 +468,19 @@ const gameOverModal = (outcome) => {
     }
     else {
         $('.modal-text').text("You lose");
-        if(game.activeGame === 2){
+        if(game.activeGame === 1){
+            $('.player1-option').position({
+                my: "center",
+                at: "center",
+                of: $('.name-drop-2')
+            });
+            $('.player2-option').position({
+                my: "center",
+                at: "center",
+                of: $('.name-drop-1')
+            });
+        }
+        else if(game.activeGame === 2){
             $('.modal-text').text(`You lose, ${game.teamGuessActivePlayer.fullName} is on the ${game.teamGuessActivePlayer.teamName}.`)
         }
     }
@@ -508,7 +525,7 @@ const createPlayerStatsElements = (playerElement, playerNum) => {
     playerElement.append($headshot);
     playerElement.append($headshotHidden);
     
-    playerElement.append($('<div>').addClass('player-name-drop name-answer').attr('playerID', game.playersInGame[playerNum]['id']));
+    playerElement.append($('<div>').addClass(`player-name-drop name-answer name-drop-${playerNum+1}`).attr('playerID', game.playersInGame[playerNum]['id']));
 
     formatStats(playerObj);
     let statDisp = game.playersInGame[playerNum]['stats']['formatted']
@@ -549,10 +566,12 @@ const createPlayerStatsElements = (playerElement, playerNum) => {
 const resetGame = () => {
     
     $('.modal').hide();
-    if( $('.modal-text-area').children().length > 2) {
-        $('.modal-text-area').children().last().remove();
-        $('.modal-text-area').children().last().remove();
-    }
+    
+    //Code to clear out added elements on modal - not sure if needed - TODO
+    // if( $('.modal-text-area').children().length > 2) {
+    //     $('.modal-text-area').children().last().remove();
+    //     $('.modal-text-area').children().last().remove();
+    // }
     $('.player-selected-list').empty();
     $('.team-player-name').empty();
     $('.team-player-image').empty();
