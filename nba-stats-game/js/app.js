@@ -67,7 +67,7 @@ class Player {
         this.fullName = firstName + ' ' + lastName;
         this.teamID = teamID;
         this.teamName = teamName;
-
+        this.imageURL = '';
         this.stats = {};
 
         //this.chooseTeamHandler = this.chooseTeam();   //.bind(this);
@@ -148,8 +148,14 @@ class Player {
             retStats.average[key] = parseFloat((retStats.total[key] / totalGames).toFixed(2));
         }
         
+        //Get image url:
+        let nbaDataName = this.lastName + ", " + this.firstName;
+        if(game.playerHeadshotObj[nbaDataName] !== undefined) {
+            let playerHeadshotURL = game.playerHeadshotObj[nbaDataName][7];
+            this.imageURL = playerHeadshotURL;
+        }
+        //Increment total games played
         retStats.gamesPlayed = totalGames;
-
         //For debugging
         return retStats;
     }
@@ -168,15 +174,9 @@ class Player {
             console.log(playerHeadshotURL);
             $('.team-player-image').append( $("<img>").attr('src', playerHeadshotURL) );
 
-            // $('.team-player-name').css({
-            //     'background': `url('${playerHeadshotURL}')`,
-            //     'background-size' : '50%',
-            //     'background-repeat' : 'no-repeat',
-            //     'background-position-x' : '90%',
-            //     'background-position-y': '-20%'
-            // });
         }
         else {
+            //Todo - update this to use the silohoutee 
             $('.team-player-name').css( 'background', `url('https://stats.nba.com/media/img/league/nba-headshot-fallback.png')`);
         }
         
@@ -390,7 +390,7 @@ const showPlayerComparison = () => {
             if(game.matchPlaced.every(e => e=== true)) {
                 if (game.matchAnswer.every( e=> e === true)){
                     gameOverModal('win');
-
+                    
                 }
                 else {
                     gameOverModal('lose');
@@ -406,6 +406,11 @@ const showPlayerComparison = () => {
 
 const gameOverModal = (outcome) => {
 
+    if(game.activeGame === 1){
+        $('.headshot-image').css('display', 'none');
+        $('.headshot-image-real').css('display', 'block');
+    }
+
     if(outcome === 'win') {
         $('.modal-text').text("You win!");
     }
@@ -418,29 +423,60 @@ const gameOverModal = (outcome) => {
     $('.modal').show();
     $('.player1-option').draggable("destroy");
     $('.player2-option').draggable("destroy");
+    
+}
+
+const formatStats = (playerObj) => {
+    playerObj['stats']['formatted'] = { pts: '', fg: '', fg3p: '', ft: '', reb: '', min: '', ast: '', stl: '', blk: ''};
+    let average = playerObj['stats']['average'];
+
+    playerObj['stats']['formatted'].pts = (average['pts'] ).toFixed(2);
+    playerObj['stats']['formatted'].fg = ( (average['fgm']/average['fga']) * 100 ).toFixed(0);
+    if(average['fga'] === 0){
+        playerObj['stats']['formatted'].fg = 0;
+    }
+    playerObj['stats']['formatted'].fg3p = ( (average['fg3m']/average['fg3a']) * 100 ).toFixed(0);
+    if(average['fg3a'] === 0){
+        playerObj['stats']['formatted'].fg3p = 0;
+    }
+    playerObj['stats']['formatted'].ft = ( (average['ftm']/average['fta']) * 100 ).toFixed(0);
+    if(average['fta'] === 0){
+        playerObj['stats']['formatted'].ft = 0;
+    }
+    playerObj['stats']['formatted'].reb = ( parseFloat(average['oreb']) + parseFloat(average['dreb']) ).toFixed(1);
+    playerObj['stats']['formatted'].min = ( parseFloat(average['min']) ).toFixed(1);
+    playerObj['stats']['formatted'].ast = ( parseFloat(average['ast']) ).toFixed(1);
+    playerObj['stats']['formatted'].stl = ( parseFloat(average['stl']) ).toFixed(1);
+    playerObj['stats']['formatted'].blk = ( parseFloat(average['blk']) ).toFixed(1);
 }
 
 const createPlayerStatsElements = (playerElement, playerNum) => {
     
     //Get variable to access player stats
     let avgStatsObj = game.playersInGame[playerNum]['stats']['average'];
+    let playerObj = game.playersInGame[playerNum];
 
-    $headshot= $('<img>').addClass('headshot-image').attr('src','img/unknown-player.png');
+    $headshot= $('<img>').addClass('headshot-image').attr('src','img/unknown-player-cropped.png');
+    $headshotHidden= $('<img>').addClass('headshot-image-real').attr('src', playerObj['imageURL']).css('display', 'none');
     playerElement.append($headshot);
+    playerElement.append($headshotHidden);
     
     //TODO #1 - for testing - remove Name from final, this should just be the draggable location
     //playerElement.append($('<div>').text(game.playersInGame[playerNum].fullName).addClass('player-name-drop name-answer').attr('playerID', game.playersInGame[playerNum]['id']));
     playerElement.append($('<div>').addClass('player-name-drop name-answer').attr('playerID', game.playersInGame[playerNum]['id']));
+
+    formatStats(playerObj);
+    let statDisp = game.playersInGame[playerNum]['stats']['formatted']
 
     //Create Stat Sub-sections (pts / reb+min / ast+stl+blk)
     //Section 1 - Pts, FG%, 3P%, FT%
     let $statSect1 = $('<div>').addClass('stat-1');
     let $ul1 = $('<ul>');
     $statSect1.append($ul1);
-    let $liPts = $('<li>').append($('<span>').addClass('main-stat').text(`Pts: ${avgStatsObj['pts']}`));
-    let $liFg = $('<li>').text(`Fg: ${(avgStatsObj.fgm/avgStatsObj.fga).toFixed(2)}%  (${(avgStatsObj.fgm).toFixed(1)}/${(avgStatsObj.fga).toFixed(1)})`);
-    let $li3p = $('<li>').text(`3P: ${(avgStatsObj.fg3m/avgStatsObj.fg3a).toFixed(2)}%  (${(avgStatsObj.fg3m).toFixed(1)}/${(avgStatsObj.fg3a).toFixed(1)})`);
-    let $liFt = $('<li>').text(`Ft: ${(avgStatsObj.ftm/avgStatsObj.fta).toFixed(2)}%  (${(avgStatsObj.ftm).toFixed(1)}/${(avgStatsObj.fta).toFixed(1)})`);
+    let $liPts = $('<li>').append($('<span>').addClass('main-stat').text(`Pts: ${statDisp['pts']}`));
+    let $liFg = $('<li>').text(`Fg: ${statDisp['fg']}%  (${(avgStatsObj.fgm).toFixed(1)}/${(avgStatsObj.fga).toFixed(1)})`);
+    let $li3p = $('<li>').text(`3P: ${statDisp['fg3p']}%  (${(avgStatsObj.fg3m).toFixed(1)}/${(avgStatsObj.fg3a).toFixed(1)})`);
+    let $liFt = $('<li>').text(`Ft: ${statDisp['ft']}%  (${(avgStatsObj.ftm).toFixed(1)}/${(avgStatsObj.fta).toFixed(1)})`);
     $ul1.append($liPts).append($liFg).append($li3p).append($liFt);
 
     //Section 2 - Rebounds + Minutes
@@ -448,17 +484,17 @@ const createPlayerStatsElements = (playerElement, playerNum) => {
     let $statSect2 = $('<div>').addClass('stat-2');
     let $ul2 = $('<ul>');
     $statSect2.append($ul2);
-    let $liReb = $('<li>').append($('<span>').addClass('main-stat').text(`Reb: ${parseFloat(avgStatsObj.oreb) + parseFloat(avgStatsObj.dreb)}`));
-    let $liMin = $('<li>').append($('<span>').addClass('main-stat').text(`Min: ${parseFloat(avgStatsObj.min).toFixed(1)}`));
+    let $liReb = $('<li>').append($('<span>').addClass('main-stat').text(`Reb: ${statDisp['reb']}`));
+    let $liMin = $('<li>').append($('<span>').addClass('main-stat').text(`Min: ${statDisp['min']}`));
     $ul2.append($liReb).append($liMin);
 
     //Section 3 - Ast, Stl, Blk
     let $statSect3 = $('<div>').addClass('stat-3');
     let $ul3 = $('<ul>');
     $statSect3.append($ul3);
-    let $liAst = $('<li>').append($('<span>').addClass('main-stat').text(`Ast: ${avgStatsObj.ast}`));
-    let $liStl = $('<li>').append($('<span>').addClass('main-stat').text(`Stl: ${avgStatsObj.stl}`));
-    let $liBlk = $('<li>').append($('<span>').addClass('main-stat').text(`Blk: ${avgStatsObj.blk}`));
+    let $liAst = $('<li>').append($('<span>').addClass('main-stat').text(`Ast: ${statDisp['ast']}`));
+    let $liStl = $('<li>').append($('<span>').addClass('main-stat').text(`Stl: ${statDisp['stl']}`));
+    let $liBlk = $('<li>').append($('<span>').addClass('main-stat').text(`Blk: ${statDisp['blk']}`));
     $ul3.append($liAst).append($liStl).append($liBlk);
 
     playerElement.append($statSect1).append($statSect2).append($statSect3)
@@ -478,6 +514,9 @@ const resetGame = () => {
 
     $('.player-options-container').remove();
     $('.player-stats-container').remove();
+
+    //Remove background placeholder (no headshot found) in Team Game
+    $('.team-player-name').css('background', '');
 
 }
 
@@ -586,6 +625,7 @@ const setupTeamGame = () => {
     })
     //Event listener to reset game from the win/loss modal
     $('.reset-button').on('click', resetGame);
+    //$('.modal').on('click', resetGame);
     //Add event listener to launch game on "Random Player" button
     $('.team-random-player').on('click', getSinglePlayerRandom);
 }
@@ -601,5 +641,7 @@ $( () => {
     $('.player-comparison').on('click', setupMatchGame);
     $('.player-team').on('click', setupTeamGame);
     $('.about-info').on('click', setupAboutInfo)
-
+    
+    //Reset the game from clicking anywhere on the modal
+    $('.modal').on('click', resetGame);
 })

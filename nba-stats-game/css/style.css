@@ -1,5 +1,5 @@
 * {
-    border: 1px solid black;
+    border: 1px solid blue;
 }
 body{
     background: url('../img/hardwood.jpg');
@@ -87,8 +87,16 @@ body {
     height: 2em;
 }
 .headshot-image {
-    width: 100px;
+    max-width: 100%;
     height: auto;
+    display: block;
+    margin: 0 auto;
+}
+.headshot-image-real {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
 }
 .player1-stats-container, .player2-stats-container{
     flex-basis: 50%;
@@ -135,6 +143,7 @@ ul {
     padding: 1em 0;
     z-index: 99;
     color: white;
+    font-size: 2vh;
 }
 .eastern-conf {
     background-color: rgb(214, 60, 60);
@@ -221,6 +230,9 @@ ul {
         flex-basis: 49%;
         box-sizing: border-box;
         padding: 0.75em 0.7em;
+        font-size: 2vw;
+    }
+    .conference-select > div{
         font-size: 2vw;
     }
 }
