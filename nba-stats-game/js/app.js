@@ -276,6 +276,8 @@ const getPlayersFromTopX = (event) => {
     apiCallPlayerName(searchStr + ranPlayerName2);
 }
 
+//Core Function
+    //Does API call with input parameters
 const apiCallPlayerName = (searchParam) => {
     console.log('API Call on', searchParam);
 
@@ -283,7 +285,6 @@ const apiCallPlayerName = (searchParam) => {
         url: playersUrl + searchParam
     }).then(
         (apiData) => {
-            
             //If there is no 'data' key in the API data, the noData is true
             //If there is a 'data' key AND it has NBA player info within (length > 0), the noData is false
             let noData = true; 
@@ -307,16 +308,19 @@ const apiCallPlayerName = (searchParam) => {
             $('.player-selected-list').append( $('<li>').text('Unable to process request at this time, please wait.') );
         }
     );
-   
-    
 };
 
+//Player Comparison AND Team Guessing
+//Main function called by the apiCallPlayerName to take data returned and create a Player instance
+//Branches to either game from here
+    //Player Comparison - getCurrSeasonStats
+    //Team Guessing - playTeamGame
 const buildPlayerFromID = (data) => {
-
     //Todo - handle error if more than 1 result returned
     console.log(data);
     let playerID, firstName, lastName, teamID, teamName;
 
+    //Handling data returned from API via player name search 
     if(data['data']) {
         playerID = data["data"][0]["id"];
         firstName = data["data"][0]["first_name"];
@@ -324,6 +328,7 @@ const buildPlayerFromID = (data) => {
         teamID = data["data"][0]["team"]["id"];
         teamName = data["data"][0]["team"]["full_name"];
     }
+    //Handles data returned from the API looking up directly with ID numbers
     else if(data['id']) {
         playerID = data["id"];
         firstName = data["first_name"]
@@ -347,12 +352,17 @@ const buildPlayerFromID = (data) => {
    
 }
 
+//Player Comparison Game
+//Called once we have two players selected in the game
+    //Create the answer buttons for each player with their name
+    //Make answer buttons draggable
+    //Randomize player order and display stats for each - Calls createPlayerStatsElements
+    //Setup droppable functionality - includes where they can be dropped, how they are snapped, and how to evaluate game end conditions
 const showPlayerComparison = () => {
     console.log('Comparing: ', game.playersInGame[0],game.playersInGame[1]);
 
     let player1 = game.playersInGame[0];
     let player2 = game.playersInGame[1];
-
 
     //Add player 1 and player 2 buttons
     let $playerOptionsCont = $('<div>').addClass('player-options-container player-name-drop');  
@@ -371,13 +381,10 @@ const showPlayerComparison = () => {
             $('.draggable-player').draggable("option", "revert", true);
         }
     })
-    
     //Randomize which player is 1 and 2 and reassign new P1/P2 variable to use for display
     if ( Math.random() >= 0.5) {
         [game.playersInGame[0], game.playersInGame[1]] = [game.playersInGame[1],game.playersInGame[0]];
     }
-    let hiddenP1 = game.playersInGame[0];
-    let hiddenP2 = game.playersInGame[1];
 
     //Display Stats Section
     let $playerStatsContainer = $('<div>').addClass('player-stats-container');
@@ -450,13 +457,21 @@ const showPlayerComparison = () => {
     });
     //Info on draggable from jQuery UI docs, https://codepen.io/jyloo/pen/GjbmLm, https://stackoverflow.com/questions/26746823/jquery-ui-drag-and-drop-snap-to-center
     //Using http://touchpunch.furf.com/ for mobile compatibility with jQuery drag/drop 
-  
-    //Save any buttons we'll need later to game obj
+
 }
 
+//Player Comparison AND Team Guessing Games
+//Main game end evaluator for both games, it has several main functions:
+    //Both - Removes the HTML parameters, so if page is refreshed we have a "clean start"
+    //Player Comparison specific - swap in player headshot, create link for this comparison, setup copy link button
+    //Team guessing Game specific - Create link, setup copy link button
+    //Win/Lose - display text for each case
+        //If player comparison - move the player answer to the correct player stat field
+        //If Team Guessing - in the loss message, say which team the player is really on
+    //Both - show the modal
 const gameOverModal = (outcome) => {
 
-    //Reset the URL to the base website url - prevents reloading URL players on refresh
+    //Reset the URL to the base website url - prevents reloading original URL-specified players on refresh
     let url = window.location.href;
     let urlParams = url.substring( 0, url.indexOf('?') ); 
     if(window.history.pushState) {
@@ -464,20 +479,22 @@ const gameOverModal = (outcome) => {
     }
     //Info from https://stackoverflow.com/questions/824349/how-do-i-modify-the-url-without-reloading-the-page
 
+    //Player Comparison Game
     if(game.activeGame === 1){
+        //Show real player headshot, hide the mystery silhouette
         $('.headshot-image').css('display', 'none');
         $('.headshot-image-real').css('display', 'block');
     
-        //Share matchup link
+        //Create link for this specific Player Comparison
         let baseURL = window.location.href
         let p1 = game.playersInGame[0]['id']
         let p2 = game.playersInGame[1]['id']
         let link = `${baseURL}?gamemode=1&p1=${p1}&p2=${p2}`;
-        
         let $linkTag = $('.share-link').text('comparison').attr('href', link);
+        
+        //Add a copy button so users can copy the link to their clipboard
         let $copyButton = $('.copy-button');
         $('.share-text').append($copyButton);
-
         $copyButton.on('click', (event) => {
             $copyTag = $('<input>').val( $('.share-link').attr('href') );
             $('body').append($copyTag);
@@ -488,16 +505,18 @@ const gameOverModal = (outcome) => {
         }) 
         //Copy paste info - https://www.w3schools.com/howto/howto_js_copy_clipboard.asp
     }
+    //Team Guessing Game
     if(game.activeGame === 2) {
-        //Share matchup link
+        //Create link for this specific player Team Guess game
         let baseURL = window.location.href
         let player = game.teamGuessActivePlayer['id'];
         let link = `${baseURL}?gamemode=2&p=${player}`;
-        
         let $linkTag = $('.share-link').text('team guess challenge').attr('href', link);
+        
+        //Add a copy button so users can copy the link to their clipboard
+        //TODO - could we dry this out?
         let $copyButton = $('.copy-button');
         $('.share-text').append($copyButton);
-
         $copyButton.on('click', (event) => {
             $copyTag = $('<input>').val( $('.share-link').attr('href') );
             $('body').append($copyTag);
@@ -508,12 +527,15 @@ const gameOverModal = (outcome) => {
         }) 
     }
 
+    //Show Win text in either case
     if(outcome === 'win') {
         $('.modal-text').text("You win!");
 
     }
+    //Show loss text
     else {
         $('.modal-text').text("You lose");
+        //If Player Comparison - also swap the player names to their correct location
         if(game.activeGame === 1){
             $('.player1-option').position({
                 my: "center",
@@ -526,26 +548,31 @@ const gameOverModal = (outcome) => {
                 of: $('.name-drop-1')
             });
         }
+        //If Team Guessing - give the correct team when guessed wrong
         else if(game.activeGame === 2){
-            $('.modal-text').text(`You lose, ${game.teamGuessActivePlayer.fullName} is on the ${game.teamGuessActivePlayer.teamName}.`)
+            $('.modal-text').text(`You lose, ${game.teamGuessActivePlayer.fullName} is on the ${game.teamGuessActivePlayer.teamName}.`);
         }
-    }
+    };
+    //Show the modal and prevent further dragging of the player names for Player Comparison
     $('.modal').show();
     $('.player1-option').draggable("destroy");
     $('.player2-option').draggable("destroy");
-    
 }
 
+//Player Comparison Game 
+//Handles formatting of the Player.stats.average object for display
+    //Called by createPlayerStatsElements
 const formatStats = (playerObj) => {
     playerObj['stats']['formatted'] = { pts: '', fg: '', fg3p: '', ft: '', reb: '', min: '', ast: '', stl: '', blk: ''};
     let average = playerObj['stats']['average'];
-
+    
+    //For any missing stats, just use 0
     for(let statKey in average) {
         if (!average[statKey]) {
             average[statKey] = 0;
         }
     }
-
+    //Format each stat as needed (eg: correct % format, right number of decimals, etc)
     playerObj['stats']['formatted'].pts = (average['pts'] ).toFixed(2);
     playerObj['stats']['formatted'].fg = ( (average['fgm']/average['fga']) * 100 ).toFixed(0);
     if(average['fga'] === 0){
@@ -566,6 +593,9 @@ const formatStats = (playerObj) => {
     playerObj['stats']['formatted'].blk = ( parseFloat(average['blk']) ).toFixed(1);
 }
 
+//Player Comparison Game 
+//This created the HTML elements to display the stats for a single player
+    //Called twice by showPlayercomparison - once for each player compared
 const createPlayerStatsElements = (playerElement, playerNum) => {
     
     //Get variable to access player stats
@@ -615,9 +645,11 @@ const createPlayerStatsElements = (playerElement, playerNum) => {
     $ul3.append($liAst).append($liStl).append($liBlk);
 
     playerElement.append($statSect1).append($statSect2).append($statSect3)
-
 }
 
+//Team Guess/Player Compare
+//Resets all game elements and removes various input and game area tags added
+//This is a catch all for removing elements added by the game that need to be removed between rounds/guesses
 const resetGame = () => {
     
     $('.modal').hide();
@@ -642,12 +674,19 @@ const resetGame = () => {
     $('.team-player-name').css('background', '');
 
 }
-const resetScoreBoard = () => {
 
+// Team Guessing Game - resets the scoreboard text to 0 of 0 and the game.teamGuessScore property
+const resetScoreBoard = () => {
     game.teamGuessScore = [0, 0];
     $('.score-board').text(`Score: ${game.teamGuessScore[0]} of ${game.teamGuessScore[1]}`);
 }
 
+//Player Comparison Game - Creates and appends the page elements 
+//Will go into player selection logic by one of three functions based on the button selected:
+    // Text Input field - getPlayerIDFromInput
+    // Top 100 button - getPlayersFromTopX
+    // Random button - getPlayersFromRandom
+//Also has jQuery Autocomplete code call and reset button 
 const setupMatchGame = () => {
     //Set the code to use the Matching Game 
     game.activeGame = 1;
@@ -670,7 +709,6 @@ const setupMatchGame = () => {
         'type' : 'submit',
         'value' : "Add",
     } ));
-
     //player-select-bottom
         //Player select display
     $bottomSection = $('<div>').addClass('player-select-bottom');
@@ -695,6 +733,8 @@ const setupMatchGame = () => {
     });
 }
 
+//Team Guessing Game - Creates and appends the page elements 
+//Will go into player selection logic by calling getSinglePlayerRandom - from the "Random Player" button
 const setupTeamGame = () => {
     //Set code to use the Team Game code
     game.activeGame = 2;
@@ -741,7 +781,6 @@ const setupTeamGame = () => {
             $newTeamDiv.addClass('west-team').removeClass('east-team');
         }
     }
-
     //Event handler to switch between East/West
     $('.eastern-conf').on('click', () => {
         $('.west-team').hide();
@@ -755,16 +794,18 @@ const setupTeamGame = () => {
     $('.reset-button').on('click', resetGame);
     //$('.modal').on('click', resetGame);
 
-
     //Add event listener to launch game on "Random Player" button
     $('.team-random-player').on('click', getSinglePlayerRandom);
     $('.score-board').on('click', resetScoreBoard);
 }
 
 const setupAboutInfo= () => {
-    
+    //TODO
 }
 
+//Player Comparison AND Team Guessing
+//Takes input from URL params via checkURLParameters
+    //Calls into the apiCallPlayerName to start each game if parameters are specified
 const playGameFromURL = () => {
     let urlParams = checkURLParameters();
 
@@ -778,10 +819,6 @@ const playGameFromURL = () => {
                 let p2 = `/${urlParams['p2']}`;
                 apiCallPlayerName(p1);
                 apiCallPlayerName(p2);
-
-                // let url = window.location.href;
-                // let urlParams = url.splice( url.indexOf('?'), url.length - url.indexOf('?') ); 
-                // window.history.pushState( {}, 'Test Title', '')
             }
             else {
                 console.log('Selected Player Comp game but bad player params');
@@ -793,9 +830,7 @@ const playGameFromURL = () => {
 
                 let player = `/${urlParams['p']}`;
                 apiCallPlayerName(player);
-
             }
-
         }
         else {
             console.log('Incorrect Parameters - no gamemode specified');
@@ -806,12 +841,17 @@ const playGameFromURL = () => {
     }
 }
 
+//On load code
 $( () => {
-    //getPlayerSeasonStats(145, 2018)
+    //First build array to coorelate NBA.com player thumbnail links to player names
     game.playerHeadshotObj = processNBAOfficialData(stats_ptsd);
     
+    //Checks if the URL has parameters to auto-start a specific comparison/player team guess game
+        //Player Comparison     - ?gamemode=1&p1=<playerID>&p2=<playerID>
+        //Team Guess            - ?gamemode=2&p=<playerID>
     playGameFromURL();
 
+    //Setup Main Buttons to choose game mode
     $('.player-comparison').on('click', setupMatchGame);
     $('.player-team').on('click', setupTeamGame);
     $('.about-info').on('click', setupAboutInfo)
