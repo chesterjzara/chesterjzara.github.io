@@ -58,6 +58,10 @@ body {
     display: flex;
     flex-flow: column wrap;
 }
+/* Hiding the autocomplete info that is added */
+.ui-helper-hidden-accessible{
+    display: hidden;
+}
 
 /* Matching Game Sections */
 .player-options-container {

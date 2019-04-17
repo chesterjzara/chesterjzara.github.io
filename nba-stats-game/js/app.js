@@ -248,6 +248,10 @@ const getPlayersFromRandom = (event) => {
 
     let ranPlayerName1 = playerNamesMasterList[Math.floor(Math.random() * playerNamesMasterList.length)];
     let ranPlayerName2 = playerNamesMasterList[Math.floor(Math.random() * playerNamesMasterList.length)];
+    //Prevent randomly getting the same player
+    while (ranPlayerName1 === ranPlayerName2) {
+        ranPlayerName2 = playerNamesMasterList[Math.floor(Math.random() * playerNamesMasterList.length)];
+    }
     let searchStr = '?search='
     apiCallPlayerName(searchStr + ranPlayerName1);
     apiCallPlayerName(searchStr + ranPlayerName2);
@@ -453,15 +457,15 @@ const gameOverModal = (outcome) => {
         let $copyButton = $('.copy-button');
         $('.share-text').append($copyButton);
 
-        $copyButton.on('click', function (event) {
+        $copyButton.on('click', (event) => {
             $copyTag = $('<input>').val( $('.share-link').attr('href') );
             $('body').append($copyTag);
             $copyTag.select();
             document.execCommand("copy");
             console.log('copied');
             $copyTag.remove();
-        })
-
+        }) 
+        //Copy paste info - https://www.w3schools.com/howto/howto_js_copy_clipboard.asp
     }
 
     if(outcome === 'win') {
@@ -579,11 +583,6 @@ const resetGame = () => {
     $('.modal').hide();
     $('.copy-button').off('click');
     
-    //Code to clear out added elements on modal - not sure if needed - TODO
-    // if( $('.modal-text-area').children().length > 2) {
-    //     $('.modal-text-area').children().last().remove();
-    //     $('.modal-text-area').children().last().remove();
-    // }
     $('.player-selected-list').empty();
     $('.team-player-name').empty();
     $('.team-player-image').empty();
@@ -595,6 +594,9 @@ const resetGame = () => {
 
     $('.player-options-container').remove();
     $('.player-stats-container').remove();
+
+    //Remove elements added by the autocomplete
+    $('.ui-helper-hidden-accessible').empty();
 
     //Remove background placeholder (no headshot found) in Team Game
     $('.team-player-name').css('background', '');
