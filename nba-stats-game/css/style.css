@@ -19,6 +19,7 @@ body {
     display: flex;
     flex-flow: row nowrap;
     width: 60%;
+    align-items: center;
 }
 .nav-menu-container > * {
     padding: 0.5em;

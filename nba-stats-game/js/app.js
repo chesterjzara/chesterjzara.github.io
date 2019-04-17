@@ -137,7 +137,6 @@ class Player {
         let totalGames = gamesArr.length;
 
         for(let gameObj of gamesArr) {
-            // retStats.total["ast"] += gameObj["ast"];
 
             for(let key in retStats.total) {
                 if(key === "min"){
@@ -152,9 +151,15 @@ class Player {
                 }
             }
         }
-
-        for(let key in retStats.total) {
-            retStats.average[key] = parseFloat((retStats.total[key] / totalGames).toFixed(2));
+        if(totalGames === 0) {
+            for(let key in retStats.total) {
+                retStats.average[key] = 0;
+            }
+        }
+        else {
+            for(let key in retStats.total) {
+                retStats.average[key] = parseFloat((retStats.total[key] / totalGames).toFixed(2));
+            }
         }
         
         //Get image url:
@@ -163,9 +168,9 @@ class Player {
             let playerHeadshotURL = game.playerHeadshotObj[nbaDataName][7];
             this.imageURL = playerHeadshotURL;
         }
-        //Increment total games played
+        //Update total games played after subtracting 0 minute games
         retStats.gamesPlayed = totalGames;
-        //For debugging
+       
         return retStats;
     }
 
@@ -453,14 +458,11 @@ const gameOverModal = (outcome) => {
             $('body').append($copyTag);
             $copyTag.select();
             document.execCommand("copy");
+            console.log('copied');
             $copyTag.remove();
         })
 
     }
-
-    
-
-    
 
     if(outcome === 'win') {
         $('.modal-text').text("You win!");
@@ -494,6 +496,12 @@ const formatStats = (playerObj) => {
     playerObj['stats']['formatted'] = { pts: '', fg: '', fg3p: '', ft: '', reb: '', min: '', ast: '', stl: '', blk: ''};
     let average = playerObj['stats']['average'];
 
+    for(let statKey in average) {
+        if (!average[statKey]) {
+            average[statKey] = 0;
+        }
+    }
+
     playerObj['stats']['formatted'].pts = (average['pts'] ).toFixed(2);
     playerObj['stats']['formatted'].fg = ( (average['fgm']/average['fga']) * 100 ).toFixed(0);
     if(average['fga'] === 0){
@@ -522,6 +530,9 @@ const createPlayerStatsElements = (playerElement, playerNum) => {
 
     $headshot= $('<img>').addClass('headshot-image').attr('src','img/unknown-player-cropped.png');
     $headshotHidden= $('<img>').addClass('headshot-image-real').attr('src', playerObj['imageURL']).css('display', 'none');
+    if(playerObj['imageURL'] === ''){
+        $headshotHidden.attr('src', 'img/unknown-player-cropped.png');
+    }
     playerElement.append($headshot);
     playerElement.append($headshotHidden);
     
@@ -566,6 +577,7 @@ const createPlayerStatsElements = (playerElement, playerNum) => {
 const resetGame = () => {
     
     $('.modal').hide();
+    $('.copy-button').off('click');
     
     //Code to clear out added elements on modal - not sure if needed - TODO
     // if( $('.modal-text-area').children().length > 2) {
