@@ -693,7 +693,6 @@ const setupMatchGame = () => {
     $('#player-input-box').autocomplete({
         source: playerNamesMasterList
     });
-    $('.score-board').on('click', resetScoreBoard);
 }
 
 const setupTeamGame = () => {
