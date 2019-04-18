@@ -79,8 +79,6 @@ class Player {
         this.teamName = teamName;
         this.imageURL = '';
         this.stats = {};
-
-        //this.chooseTeamHandler = this.chooseTeam();   //.bind(this);
     }
 
     getCurrSeasonStats() {
