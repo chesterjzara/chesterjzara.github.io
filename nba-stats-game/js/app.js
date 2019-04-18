@@ -368,8 +368,8 @@ const showPlayerComparison = () => {
     //Add player 1 and player 2 buttons
     let $playerOptionsCont = $('<div>').addClass('player-options-container player-name-drop');  
     $('.game-area-container').append($playerOptionsCont);
-    let $player1Option = $('<div>').addClass('player1-option draggable-player').text(player1.fullName).attr('playerID', player1['id']);
-    let $player2Option = $('<div>').addClass('player2-option draggable-player').text(player2.fullName).attr('playerID', player2['id']);
+    let $player1Option = $('<div>').addClass('player1-option draggable-player name-bounce').text(player1.fullName).attr('playerID', player1['id']);
+    let $player2Option = $('<div>').addClass('player2-option draggable-player name-bounce').text(player2.fullName).attr('playerID', player2['id']);
     $playerOptionsCont.append($player1Option).append($player2Option);
     
     //Make these buttons dragable

@@ -79,7 +79,7 @@ const playerRanks = {
     "76" : "Aaron Gordon",
     "77" : "Jeff Teague",
     "78" : "Jordan Clarkson",
-    "79" : "TJ Warren",
+    "79" : "T.J. Warren",           //was TJ but API has "T.J."
     "80" : "Jusuf Nurkic",
     "81" : "Dario Saric",
     "82" : "D'Angelo Russell",
@@ -549,7 +549,7 @@ const playerNamesMasterList = [
     "Rajon Rondo",
     "JaMychal Green",
     "Marvin Williams",
-    "Mohamed Bamba",
+    "Mo Bamba",         //Manually changed from Mohamed to Mo
     "Mason Plumlee",
     "Dion Waiters",
     "Kentavious Caldwell-Pope",
@@ -722,7 +722,7 @@ const playerNamesMasterList = [
     "Meyers Leonard",
     "Jonas Jerebko",
     "Salah Mejri",
-    "Nene Hilario",
+    "Nene", //manually editted to be Nene only per NBA.com
     "D.J. Wilson",
     "Alexis Ajinca",
     "Daniel Theis",
