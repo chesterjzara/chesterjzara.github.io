@@ -6,7 +6,7 @@ const playersUrl = 'https://www.balldontlie.io/api/v1/players';
 const currSeason = 2018;
 
 const game = {
-    playerCache : [],
+    playerCache : {},
     playersInGame : [],
     matchPlaced: [false, false],
     matchAnswer: [false, false],
@@ -94,35 +94,55 @@ class Player {
     getCurrSeasonStats() {
         console.log('Hit: getting current season game stats');
 
-        // Search for a players stats in each game this season
-        $.ajax({
-            url: `${statsUrl}?seasons[]=${currSeason}&player_ids[]=${this.id}&per_page=100`,
-            context: this
-        }).then(
-            (statsData) => {
-                console.log(`Stats from each game for ${this.fullName}:`);
-                console.log(statsData);
-                
-                this.stats = this.calculateCurrentSeasonStats(statsData);
+        let alreadyHasStats = false;
+        alreadyHasStats = ('gamesPlayed' in this.stats);
 
-                game.playerCache.push(this);
-                game.playersInGame.push(this);
-
-                console.log('Players:', game.playersInGame);
-
-                //Refresh Display of selected players:
-                updateSelectedPlayerDisplay();
-
-                // **IMPORTANT** This is where we start showing both players stats and advance the game 
-                if(game.playersInGame.length > 1) {
-                    showPlayerComparison();
-                }
-                console.log("Player added",this);
-            },
-            () => {
-                console.log('Season Stats: bad request');
+        if(alreadyHasStats) {
+            console.log(`Cached stats for ${this.fullName}:`);
+            console.log(this.stats);
+            game.playersInGame.push(this);
+            console.log('Players:', game.playersInGame);
+            updateSelectedPlayerDisplay();
+            if(game.playersInGame.length > 1) {
+                showPlayerComparison();
             }
-        );
+        }
+        else {
+            // If not cached, Search for a players stats in each game this season
+            $.ajax({
+                url: `${statsUrl}?seasons[]=${currSeason}&player_ids[]=${this.id}&per_page=100`,
+                context: this
+            }).then(
+                (statsData) => {
+                    console.log(`Stats from each game for ${this.fullName}:`);
+                    console.log(statsData);
+                    
+                    //Calculate Stats from all games in the season
+                    this.stats = this.calculateCurrentSeasonStats(statsData);
+
+                    //Cache the player object with stats
+                    storeLocal(this.fullName, this);
+
+                    //Adding player to Game memory as active selection
+                    game.playersInGame.push(this);
+
+
+                    console.log('Players:', game.playersInGame);
+
+                    //Refresh Display of selected players:
+                    updateSelectedPlayerDisplay();
+
+                    // **IMPORTANT** This is where we start showing both players stats and advance the game 
+                    if(game.playersInGame.length > 1) {
+                        showPlayerComparison();
+                    }
+                    console.log("Player added",this);
+                },
+                () => {
+                    console.log('Season Stats: bad request');
+                }
+            );
+        }
     }
     calculateCurrentSeasonStats(statsData) {
         console.log('Checking game stats data: ',statsData);
@@ -280,34 +300,68 @@ const getPlayersFromTopX = (event) => {
     //Does API call with input parameters
 const apiCallPlayerName = (searchParam) => {
     console.log('API Call on', searchParam);
+    //Refresh cache from local storage:
+    loadLocal();
 
-    $.ajax({
-        url: playersUrl + searchParam
-    }).then(
-        (apiData) => {
-            //If there is no 'data' key in the API data, the noData is true
-            //If there is a 'data' key AND it has NBA player info within (length > 0), the noData is false
-            let noData = true; 
-            if('data' in apiData){
-                if (apiData['data'].length > 0){
-                    noData = false;
-                }
-            }
-            //If the noData flag from above is true AND the 'id' key is also missing from the API data, this means that either method of player lookup (by name or ID respecitvely) has failed
-            if(noData && !apiData['id']) {
-                console.log('Bad search entry');
-                $('.player-selected-list').append( $('<li>').text('Unable to find player entered, try again') );
-            }
-            else {
-                buildPlayerFromID(apiData);
-            }
-            
-        },
-        () => {
-            console.log('API Request Failed');
-            $('.player-selected-list').append( $('<li>').text('Unable to process request at this time, please wait.') );
+    let skipAPI = false;
+    let playerCacheKey = ''
+    let lookUpValue;
+    let firstCharacter = searchParam.substring(0,1);
+    if(firstCharacter === '?') {
+        lookUpValue = searchParam.substring( (searchParam.indexOf('=') + 1) , searchParam.length);
+        console.log('Lookup value: ',lookUpValue);
+        let inCache = (lookUpValue in game.playerCache);
+        if(inCache) {
+            console.log('found in cache?',inCache);
+            skipAPI = true;
+            playerCacheKey = lookUpValue;
         }
-    );
+    }
+    else if(firstCharacter === '/'){
+        lookUpValue = searchParam.substring( 1, searchParam.length);
+        for(let player in game.playerCache) {
+            if (game.playerCache[player][id] == lookUpValue){
+                skipAPI = true;
+                playerCacheKey = game.playerCache[player]['fullName'];
+            }
+        }
+    }
+    
+    if (skipAPI) {
+        console.log('Skipping API:',game.playerCache[playerCacheKey]);
+        buildPlayerFromID(game.playerCache[playerCacheKey]);
+        
+    }
+    else {
+        //Player not found or recognized in the playerCache - use API to lookup
+        $.ajax({
+            url: playersUrl + searchParam
+        }).then(
+            (apiData) => {
+                //If there is no 'data' key in the API data, the noData is true
+                //If there is a 'data' key AND it has NBA player info within (length > 0), the noData is false
+                let noData = true; 
+                if('data' in apiData){
+                    if (apiData['data'].length > 0){
+                        noData = false;
+                    }
+                }
+                //If the noData flag from above is true AND the 'id' key is also missing from the API data, this means that either method of player lookup (by name or ID respecitvely) has failed
+                if(noData && !apiData['id']) {
+                    console.log('Bad search entry');
+                    $('.player-selected-list').append( $('<li>').text('Unable to find player entered, try again') );
+                }
+                else {
+                    buildPlayerFromID(apiData);
+                }
+                
+            },
+            () => {
+                console.log('API Request Failed');
+                $('.player-selected-list').append( $('<li>').text('Unable to process request at this time, please wait.') );
+            }
+        );
+    }
 };
 
 //Player Comparison AND Team Guessing
@@ -319,6 +373,7 @@ const buildPlayerFromID = (data) => {
     //Todo - handle error if more than 1 result returned
     console.log(data);
     let playerID, firstName, lastName, teamID, teamName;
+    let useStatData = false;
 
     //Handling data returned from API via player name search 
     if(data['data']) {
@@ -329,17 +384,30 @@ const buildPlayerFromID = (data) => {
         teamName = data["data"][0]["team"]["full_name"];
     }
     //Handles data returned from the API looking up directly with ID numbers
-    else if(data['id']) {
+    else if(data['first_name']) {
         playerID = data["id"];
-        firstName = data["first_name"]
-        lastName = data["last_name"]
-        teamID = data["team"]["id"]
-        teamName = data["team"]["full_name"]
+        firstName = data["first_name"];
+        lastName = data["last_name"];
+        teamID = data["team"]["id"];
+        teamName = data["team"]["full_name"];
+    }
+    //Handles players loaded from cache
+    else if(data['firstName']) {
+        playerID = data["id"];
+        firstName = data["firstName"];
+        lastName = data["lastName"];
+        teamID = data["teamID"];
+        teamName = data["teamName"];
+
+        useStatData = true;
     }
 
-    
     let newPlayer = new Player(playerID, firstName, lastName, teamID, teamName);
-    
+    if (useStatData) {
+        newPlayer['stats'] = data['stats'];
+        console.log('Test Stats copy:', newPlayer);
+    }
+
     if(game.activeGame === 1) {
         console.log("In Matching Game code branch");
         newPlayer.getCurrSeasonStats();
@@ -889,10 +957,42 @@ const playGameFromURL = () => {
     }
 }
 
+// Local Storage Caching
+const storeLocal = (dataType, stringData) => {
+    window.localStorage.setItem(dataType, JSON.stringify(stringData));
+}
+const loadLocal = () => {
+    
+    for (let key in localStorage) {
+        if(localStorage.hasOwnProperty(key)){
+            let playerObj = JSON.parse(window.localStorage.getItem(key))
+            console.log('Cache Load:', key, playerObj);
+
+            if('teamID' in playerObj){
+                game.playerCache[key] = playerObj;
+            }
+        }
+        
+    }
+
+    // hasOwnProperty - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
+
+    // let todoStored = JSON.parse(window.localStorage.getItem('todo'));
+	// let compStored = JSON.parse(window.localStorage.getItem('completed'))
+
+	// if(todoStored) {
+	// 	todoArray = todoStored;
+	// }
+	// if(compStored) {
+	// 	completedArray = compStored;
+	// }
+}
+
+
 //On load code
 $( () => {
     //Check Cache
-    
+    loadLocal();
     
     //First build array to coorelate NBA.com player thumbnail links to player names
     game.playerHeadshotObj = processNBAOfficialData(stats_ptsd);

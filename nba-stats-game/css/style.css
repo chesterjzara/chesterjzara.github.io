@@ -129,7 +129,8 @@ body {
     margin: 0.1em 0.1em;
 }
 .player-selected-container {
-    flex-basis: 75%
+    flex-basis: 75%;
+    align-self: flex-start;
 }
 .selected-player-0 {
     color: var(--accent-color1);
