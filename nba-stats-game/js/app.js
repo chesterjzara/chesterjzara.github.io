@@ -393,8 +393,8 @@ const showPlayerComparison = () => {
     //Display Stats Section
     let $playerStatsContainer = $('<div>').addClass('player-stats-container');
     $('.game-area-container').append($playerStatsContainer);
-    $player1StatsContainer = $('<div>').addClass('player1-stats-container stat-drop');  //dtd - added class stat-drop
-    $player2StatsContainer = $('<div>').addClass('player2-stats-container stat-drop');  //dtd - added class stat-drop
+    $player1StatsContainer = $('<div>').addClass('player1-stats-container stat-drop');  
+    $player2StatsContainer = $('<div>').addClass('player2-stats-container stat-drop');  
     $($playerStatsContainer).append($player1StatsContainer).append($player2StatsContainer);
 
     //Call function to add image + stats for each player
@@ -402,15 +402,15 @@ const showPlayerComparison = () => {
     createPlayerStatsElements($player2StatsContainer, 1);
 
     //Allow the player names to be dropped in the center of the player stats container
-    $('.stat-drop').droppable({  //dtd .stat-drop - was .player-name-drop
+    $('.stat-drop').droppable({  
         scope: 'playerName',
+        activeClass: 'ui-state-hover',
         drop: function(event, ui) {
             $('.draggable-player').draggable("option", "revert", false)
             $(ui.draggable).position({
                 my: "center",
                 at: "center",
                 of: $(this).children('.player-name-drop')
-                //dtd .children('.player-name-drop') - was $(this)
             });
             
             //Get which stats container we are testing
@@ -429,10 +429,10 @@ const showPlayerComparison = () => {
 
             //Get which player option was moved and which answer area it was placed in.
             let dragAnswer = $(ui.draggable).attr('playerID');
-            let dropAnswer = $(this).children('.player-name-drop').attr('playerID');        //dtd .children('.player-name-drop') was - $(this).attr...
+            let dropAnswer = $(this).children('.player-name-drop').attr('playerID');        
             //If placed in answer zone - add to placedArray
                 //else, remove
-            if($(this).children('.player-name-drop').hasClass('name-answer')){            //dtd .children('.player-name-drop') - was $(this).hasClass..
+            if($(this).children('.player-name-drop').hasClass('name-answer')){
                 game.matchPlaced[optionNum] = true;
             }
             else {
@@ -541,7 +541,7 @@ const gameOverModal = (outcome) => {
         //If Player Comparison - also swap the player names to their correct location
         if(game.activeGame === 1){
             
-            //New from dtd project
+            //Checks if the player order was randomized - adjusts where we move the player names to so they match up correctly on a loss
             let $player1end, $player2end
             if(game.wasSwapped){
                 $player1end = $('.name-drop-2');
@@ -552,16 +552,16 @@ const gameOverModal = (outcome) => {
                 $player2end = $('.name-drop-2');
             }
             
-            
+            //Based on the above section, move each player name to the right player
             $('.player1-option').position({
                 my: "center",
                 at: "center",
-                of: $player1end                 //dtd
+                of: $player1end             
             });
             $('.player2-option').position({
                 my: "center",
                 at: "center",
-                of: $player2end                 //dtd
+                of: $player2end               
             });
         }
         //If Team Guessing - give the correct team when guessed wrong

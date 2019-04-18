@@ -1,6 +1,6 @@
-* {
+/* * {
     border: 1px solid blue;
-}
+} */
 body{
     background: url('../img/hardwood.jpg');
     /* http://terrasseenboise.blogspot.com/2016/05/basketball-floor-texture.html */
@@ -19,14 +19,16 @@ body {
     display: flex;
     flex-flow: row nowrap;
     /* width: 60%; */
-    align-items: center;
+    align-items: stretch;
     margin: 1em;
+    
 }
 .nav-menu-container > * {
     padding: 0.5em;
     text-align: center;
-    font-size: 1.2em;
+    font-size: 3vh;
     flex-grow: 1;
+    border: 1px solid white;
 }
 .nav-menu-container > div > a {
     color: black;
@@ -45,6 +47,7 @@ body {
 .player-form {
     display: flex;
     flex-flow: row wrap;
+    border: 1px solid white;
 }
 .player-form > * {
     padding: 0.5em;
@@ -53,6 +56,7 @@ body {
 .player-select-bottom {
     display: flex;
     flex-flow: row nowrap;
+    border: 1px solid white;
 }
 .player-select-bottom > *{
     padding: 0.5em;
@@ -92,10 +96,12 @@ body {
     flex-flow: row nowrap;
     justify-content: space-around;
     align-items: center;
+    border: 1px solid white;
 }
 .player1-option, .player2-option {
     flex-basis: 30%;
     text-align: center;
+    font-size: 3vh;
 }
 .player1-option {
     background-color: rgba(243, 45, 45, 1);
@@ -127,11 +133,26 @@ body {
 }
 .player1-stats-container, .player2-stats-container{
     flex-basis: 50%;
+    border: 1px solid white;
+}
+.stat-1 {
+    border-top: 1px solid white;
 }
 ul {
     padding: 0;
     margin: 0;
     list-style-type: none;
+}
+.ui-state-hover {
+    /* background: yellow; */
+    animation-name: yellow-pulse;
+    animation-duration: 1.0s;
+    animation-iteration-count: infinite;
+}
+@keyframes yellow-pulse {
+    0% {background-color: ''}
+    50% {background-color: rgba(255,220,0,0.8)}
+    100% {background-color: ''}
 }
 
 /* Modal For End Condition */
@@ -190,23 +211,28 @@ ul {
     background-size: contain;
     background-repeat: no-repeat;
     background-position-x: center;
+    border: 1px solid white;
 }
 .team-input {
     display: flex;
     flex-flow: row wrap;
     align-items: stretch;
+    border: 1px solid white;
 }
 .team-input > div {
     flex-basis: 49%;
     box-sizing: border-box;
     padding: 0.75em 0.7em;
     font-size: 2vh;
+    flex-grow: 1;
+    border: 1px solid white;
 }
 .team-player-container {
     display: flex;
     flex-flow: row nowrap;
     justify-content: center;
     height: 13vh;
+    border: 1px solid white;
 }
 .team-player-name {
     /* background: url(https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/1626245.png); */
@@ -220,6 +246,7 @@ ul {
     padding: 2vh 1.5vh;
     text-align: center;
     font-size: 5vw;
+    
 }
 .team-player-image > img{
     clip-path: inset(0px 0px 56px 0px);
@@ -230,6 +257,9 @@ ul {
 @media only screen and (max-width: 400px) {
     .team-player-image > img{
         clip-path: inset(0px 0px 45px 0px);
+    }
+    .player1-option, .player2-option {
+        font-size: 2vh;
     }
 
 }
@@ -250,7 +280,6 @@ ul {
         width: 49%
     }
     .player-form > *[type='submit'] {
-        color: red;
         width: 35%
     }
     .match-option-buttons > button {
@@ -262,6 +291,9 @@ ul {
     }
     .match-option-buttons {
         flex-flow: row wrap;
+    }
+    .player1-option, .player2-option {
+        font-size: 2vh;
     }
     
 }
