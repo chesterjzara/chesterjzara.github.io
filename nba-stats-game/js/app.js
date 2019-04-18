@@ -64,7 +64,7 @@ const updateSelectedPlayerDisplay = () => {
     let numPlayersSelected = game.playersInGame.length;
     if(numPlayersSelected > 0){
         for(let i = 0 ; i < numPlayersSelected; i++ ) {
-            $('.player-selected-list').append( $(`<li> ${game.playersInGame[i].fullName} added... </li>`) );
+            $('.player-selected-list').append( $(`<li> ${game.playersInGame[i].fullName} added... </li>`).addClass('selected-player-'+i) );
         }
     }
 }

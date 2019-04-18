@@ -5,7 +5,10 @@
 :root{
     --accent-color1: rgb(201, 8, 42);
     --accent-color2: rgb(23, 64, 139);
+    --accent-color1-trans: rgba(201, 8, 42, 0.7);
+    --accent-color2-trans: rgba(23, 64, 139, 0.7);
     --line-color: rgb(255, 255, 255);
+    --background-color-trans: rgba(255, 255, 255, 0.5);
 }
 
 body{
@@ -41,7 +44,7 @@ body {
     flex-grow: 1;
     border: 1px solid white;
     color: var(--line-color);
-    opacity: 0.7;
+    /* opacity: 0.7; */
 }
 .nav-menu-container > *:hover {
     opacity: 1;
@@ -49,10 +52,10 @@ body {
     background-size: cover;
 }
 .player-comparison, .about-info {
-    background: var(--accent-color2);
+    background: var(--accent-color2-trans);
 }
 .player-team {
-    background: var(--accent-color1);
+    background: var(--accent-color1-trans);
 }
 .input-container {
     width: 90%;
@@ -100,16 +103,24 @@ body {
 .player-selected-container {
     flex-basis: 75%
 }
-
-
+.selected-player-0 {
+    color: var(--accent-color1);
+}
+.selected-player-1 {
+    color: var(--accent-color2);
+}
 
 /* Tweaks to the Autocomplete CSS */
 .ui-helper-hidden-accessible{
     display: none;
 }
 .ui-autocomplete {
-    background: #87ceeb;
+    background: whitesmoke;
     z-index: 2;
+    font-size: 2vh;
+}
+.ui-menu-item:hover, .ui-state-active {
+    background-color: yellow;
 }
 
 /* Matching Game Sections */
@@ -127,11 +138,11 @@ body {
     font-size: 3vh;
 }
 .player1-option {
-    background-color: rgba(243, 45, 45, 1);
+    background-color: var(--accent-color1);
     color: white;
 }
 .player2-option {
-    background-color: rgba(46, 50, 243, 0.8);
+    background-color: var(--accent-color2);
     color: white;
 }
 .player-stats-container {
@@ -159,8 +170,27 @@ body {
     flex-basis: 50%;
     border: 1px solid white;
 }
+.stat-box {
+    background: var(--background-color-trans);
+    font-family: Arial, Helvetica, sans-serif;
+}
 .stat-1 {
     border-top: 1px solid white;
+}
+.stat-1 li {
+    padding: 0 0 0 0.5em;
+}
+.stat-1 > ul > li:first-child {
+    padding: 0;
+}
+.stat-box li{
+    color: black;
+    font-weight: bold;
+    
+}
+.stat-box .main-stat{
+    color: var(--accent-color2);
+    font-size: 4vw;
 }
 ul {
     padding: 0;
@@ -334,7 +364,7 @@ ul {
 }
 .team-player-name {
     flex-grow: 2;
-    width: 35%;
+    width: 45%;
     box-sizing: border-box;
     padding: 2vh 1.5vh;
     text-align: center;
@@ -351,12 +381,28 @@ ul {
 /* Browser less than 400px */
 @media only screen and (max-width: 400px) {
     .team-player-image > img{
-        clip-path: inset(0px 0px 45px 0px);
+        clip-path: inset(0px 0px 41px 0px);
+    }
+    .team-player-name {
+        width: 44%;
     }
     .player1-option, .player2-option {
         font-size: 2vh;
     }
 
+    /* Make everything wider if the screen is small */
+    .nav-menu-container {
+        margin: 1em 0 1em 0;
+    }
+    .input-container {
+        width: 96%;
+    }
+    .game-area-container {
+        width: 96%;
+    }
+    .team-player-container {
+        height: 10vh;
+    }
 }
 @media only screen and (max-width: 450px) {
     .input-container {
@@ -390,6 +436,9 @@ ul {
     .player1-option, .player2-option {
         font-size: 2.5vh;
     }
+    .main-stat {
+        font-size: 6vw;
+    }
     
 }
 
@@ -417,7 +466,7 @@ ul {
         box-sizing: border-box;
         padding: 2vh 1.5vh;
         text-align: center;
-        font-size: 5vw;
+        font-size: 4vw;
     }
     .team-container > * {
         width: 20%;
@@ -465,24 +514,34 @@ ul {
     .stat-box {
         flex-grow: 1;
         padding: 0.5em 0 0 0.8em;
+        background: var(--background-color-trans);
     }
     .stat-1 {
         border-top: 0px solid white;
         border-left: 1px solid white;
     }
+    .stat-1 li {
+        padding: 0 0 0 1em;
+    }
+    .stat-1 > ul > li:first-child {
+        padding: 0;
+        color: red;
+    }
     .stat-box li{
         font-size: 3vh;
-        color: green;
     }
     .stat-box .main-stat{
         font-size: 4vh;
-        color: red;
     }
     .player-options-container > div {
         font-size: 3vh;
     }
     .player-selected-container {
         flex-basis: 70%;
+        padding: 1em 0 1em 2em;
+    }
+    .player-selected-list > li {
+        padding: 0.5em;
     }
     .match-option-buttons {
         flex-grow: 1;
