@@ -1,6 +1,13 @@
 /* * {
     border: 1px solid blue;
 } */
+
+:root{
+    --accent-color1: rgb(201, 8, 42);
+    --accent-color2: rgb(23, 64, 139);
+    --line-color: rgb(255, 255, 255);
+}
+
 body{
     background: url('../img/hardwood.jpg');
     /* http://terrasseenboise.blogspot.com/2016/05/basketball-floor-texture.html */
@@ -56,6 +63,7 @@ body {
 .player-select-bottom {
     display: flex;
     flex-flow: row nowrap;
+    justify-content: space-between;
     border: 1px solid white;
 }
 .player-select-bottom > *{
@@ -74,6 +82,7 @@ body {
 .match-option-buttons > button {
     padding: 0.5em;
     font-size: 2vh;
+    margin: 0.1em 0.1em;
 }
 .player-selected-container {
     flex-basis: 75%
@@ -118,6 +127,7 @@ body {
 }
 .player-name-drop{
     height: 2em;
+    border: 1px solid white;
 }
 .headshot-image {
     max-width: 100%;
@@ -184,6 +194,9 @@ ul {
 .conference-select{
     display: flex;
     flex-flow: row nowrap;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    border: 2px solid white;
 }
 .conference-select > div{
     flex-basis: 50%;
@@ -198,6 +211,9 @@ ul {
 }
 .western-conf {
     background-color: rgb(54, 82, 238);
+}
+.conf-button-pressed {
+    box-shadow: inset 0px 0px 22px black;
 }
 .team-container{
     display: flex;
@@ -300,18 +316,21 @@ ul {
 
 
 
-@media only screen and (min-width: 1050px) {
+@media only screen and (min-width: 1024px) {
     .team-player-image > img{
         clip-path: inset(0px 0px 56px 0px);
         max-width: 100%;
     } 
     .input-container {
-        width: 90%;
+        width: 80%;
         /* height: 17vw; */
     }
     .team-player-container {
-        width: 90%;
+        /* width: 90%; */
         height: 10vw;
+    }
+    .game-area-container {
+        width: 80%;
     }
     .team-player-name{
         flex-grow: 1;
@@ -320,6 +339,11 @@ ul {
         padding: 2vh 1.5vh;
         text-align: center;
         font-size: 5vw;
+    }
+    .team-container > * {
+        width: 20%;
+        height: 18vh;
+        box-sizing: border-box;
     }
     .team-input > div {
         flex-basis: 49%;
@@ -354,6 +378,11 @@ ul {
     }
     .stat-box {
         flex-grow: 1;
+        padding: 0.5em 0 0 0.8em;
+    }
+    .stat-1 {
+        border-top: 0px solid white;
+        border-left: 1px solid white;
     }
     .stat-box li{
         font-size: 3vh;
@@ -366,7 +395,12 @@ ul {
     .player-options-container > div {
         font-size: 3vh;
     }
-
+    .player-selected-container {
+        flex-basis: 70%;
+    }
+    .match-option-buttons {
+        flex-grow: 1;
+    }
 
 }
 

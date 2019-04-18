@@ -774,7 +774,7 @@ const setupTeamGame = () => {
     //Add conference select elements in game container
     $conferenceSelect = $('<div>').addClass('conference-select');
     $('.game-area-container').append($conferenceSelect);
-    $conferenceSelect.append( $('<div>').addClass('eastern-conf').text('East') );
+    $conferenceSelect.append( $('<div>').addClass('eastern-conf conf-button-pressed').text('East') );
     $conferenceSelect.append( $('<div>').addClass('western-conf').text('West') );
 
     //Add team logo elements in game container
@@ -800,11 +800,15 @@ const setupTeamGame = () => {
     //Event handler to switch between East/West
     $('.eastern-conf').on('click', () => {
         $('.west-team').hide();
+        $('.western-conf').removeClass('conf-button-pressed');
         $('.east-team').show();
+        $('.eastern-conf').addClass('conf-button-pressed');
     })
     $('.western-conf').on('click', () => {
-        $('.east-team').hide();
+        $('.east-team').hide()
+        $('.eastern-conf').removeClass('conf-button-pressed');
         $('.west-team').show();
+        $('.western-conf').addClass('conf-button-pressed')
     })
     //Event listener to reset game from the win/loss modal
     $('.reset-button').on('click', resetGame);
