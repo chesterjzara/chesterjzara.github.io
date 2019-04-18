@@ -27,6 +27,16 @@ const checkURLParameters = () => {
 }
 // Got info on how to do this from https://html-online.com/articles/get-url-parameters-javascript/ and https://css-tricks.com/snippets/javascript/get-url-and-url-parts-in-javascript/
 
+//Reset the URL to the base website url - prevents reloading original URL-specified players on refresh
+const resetURL = () => {
+    let url = window.location.href;
+    let urlParams = url.substring( 0, url.indexOf('?') ); 
+    if(window.history.pushState) {
+        window.history.pushState( {id: 'home'}, '', urlParams )
+    }
+//Info from https://stackoverflow.com/questions/824349/how-do-i-modify-the-url-without-reloading-the-page
+}
+
 const processNBAOfficialData = (dataObj) => {
     let retObj = [];
     let allPlayerArr = dataObj["data"]["players"]
@@ -103,25 +113,16 @@ class Player {
                 //Refresh Display of selected players:
                 updateSelectedPlayerDisplay();
 
-                //TODO #2 - move this to its own button/event handler function
-                    //Will be needed to support other player entry options (random/topX)
+                // **IMPORTANT** This is where we start showing both players stats and advance the game 
                 if(game.playersInGame.length > 1) {
                     showPlayerComparison();
                 }
-                
                 console.log("Player added",this);
-
-
             },
             () => {
                 console.log('Season Stats: bad request');
             }
         );
-        
-        //For testing use this call of example data:
-        //return this.calculateCurrentSeasonStats(getDataExample());
-        //this.stats = this.calculateCurrentSeasonStats(getDataExample());
-
     }
     calculateCurrentSeasonStats(statsData) {
         console.log('Checking game stats data: ',statsData);
@@ -473,11 +474,12 @@ const showPlayerComparison = () => {
 const gameOverModal = (outcome) => {
 
     //Reset the URL to the base website url - prevents reloading original URL-specified players on refresh
-    let url = window.location.href;
-    let urlParams = url.substring( 0, url.indexOf('?') ); 
-    if(window.history.pushState) {
-        window.history.pushState( {id: 'home'}, '', urlParams )
-    }
+    resetURL();
+    // let url = window.location.href;
+    // let urlParams = url.substring( 0, url.indexOf('?') ); 
+    // if(window.history.pushState) {
+    //     window.history.pushState( {id: 'home'}, '', urlParams )
+    // }
     //Info from https://stackoverflow.com/questions/824349/how-do-i-modify-the-url-without-reloading-the-page
 
     //Player Comparison Game
@@ -818,7 +820,30 @@ const setupTeamGame = () => {
 }
 
 const setupAboutInfo= () => {
-    //TODO
+    //Clear any existing info and do a reset
+    $('.input-container').empty();
+    $('.game-area-container').empty();
+    resetGame();
+    //Also set URL back to original value - just less annoying on refresh
+    resetURL();
+    
+    //Setup Links to each gamemode
+    let baseUrl = window.location.origin + window.location.pathname;
+    let playerGameUrl = baseUrl + '?gamemode=1'
+    let teamGameUrl = baseUrl + '?gamemode=2'
+
+    //Add Welcome section with message and links to each game mode
+    let welcomeMessage = `Test your NBA knowledge: <br><br> - <a href="${playerGameUrl}">Player Comparison</a> game: test your ability to differentiate two players based only on their basic counting stats. <br> - <a href="${teamGameUrl}">Team Guess</a> game: identify which team a random player plays for. <br><br> Data provided by <a href="${'https://www.balldontlie.io/#introduction'}">balldontlie.io</a>`;
+    let $aboutContainer = $('<div>').addClass('about-container');
+    $aboutContainer.append( $('<h2>').addClass('about-welcome').text('Welcome') );
+    $aboutContainer.append( $('<p>').addClass('about-message').html(welcomeMessage) );
+    $('.input-container').append($aboutContainer);
+    
+    //Add Color Scheme Section - work in progress TODO
+    let $colorContainer = $('<div>').addClass('color-container');
+    $colorContainer.append( $('<h2>').addClass('color-header').text('Color Theme Picker') );
+    $colorContainer.append( $('<div>').addClass('color-content').text('Coming Soon') );
+    $('.game-area-container').append($colorContainer);
 }
 
 //Player Comparison AND Team Guessing
@@ -839,7 +864,8 @@ const playGameFromURL = () => {
                 apiCallPlayerName(p2);
             }
             else {
-                console.log('Selected Player Comp game but bad player params');
+                console.log('Selected Player Comp game but incorrect or no player params');
+                setupMatchGame();
             }
         }
         else if(urlParams['gamemode'] === '2') {
@@ -848,6 +874,10 @@ const playGameFromURL = () => {
 
                 let player = `/${urlParams['p']}`;
                 apiCallPlayerName(player);
+            }
+            else {
+                console.log('Selected Team Guess game but incorrect or no player params');
+                setupTeamGame();
             }
         }
         else {
@@ -864,16 +894,25 @@ $( () => {
     //First build array to coorelate NBA.com player thumbnail links to player names
     game.playerHeadshotObj = processNBAOfficialData(stats_ptsd);
     
-    //Checks if the URL has parameters to auto-start a specific comparison/player team guess game
-        //Player Comparison     - ?gamemode=1&p1=<playerID>&p2=<playerID>
-        //Team Guess            - ?gamemode=2&p=<playerID>
-    playGameFromURL();
+    //Check if any parameters (text after '?') are passed in the site URL
+    let checkIfLoadingGame = checkURLParameters();
+    if(Object.keys(checkIfLoadingGame).length > 0) {
+        //If the URL has parameters to auto-start the player comp or team guess game -> then launches the code for that game
+            //Player Comparison     - ?gamemode=1&p1=<playerID>&p2=<playerID>
+            //Team Guess            - ?gamemode=2&p=<playerID>
+        playGameFromURL();
+    }
+    else {
+        //If the URL returns no parameters, launch the welcome/about/info screen by default
+        setupAboutInfo();
+    }
 
-    //Setup Main Buttons to choose game mode
+    //Setup Main Nav Buttons to choose game mode
     $('.player-comparison').on('click', setupMatchGame);
     $('.player-team').on('click', setupTeamGame);
     $('.about-info').on('click', setupAboutInfo)
     
     //Reset the game from clicking anywhere on the modal
+        //Removed for now - doesn't allow click in modal-text area, which we need for the share links
     //$('.modal').on('click', resetGame);
 })

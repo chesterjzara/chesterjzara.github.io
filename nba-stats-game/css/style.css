@@ -66,6 +66,34 @@ body {
     /* height: 60vh; */
 }
 
+/* About section */
+.about-container {
+    background: rgba(0,0,0,0.3);
+    color: white;
+}
+.about-welcome {
+    font-size: 2em;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 1em 1em 0 1em;
+    margin: 0;
+}
+.about-message {
+    font-size: 2em;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 1em;
+    margin: 0;
+}
+.color-container {
+    background: rgba(0,0,0,0.3);
+    color: white;
+}
+.color-header {
+    font-size: 2em;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 1em 1em 0 1em;
+    margin: 0;
+}
+
 /* Matching Game Inputs */
 .player-form {
     display: flex;
