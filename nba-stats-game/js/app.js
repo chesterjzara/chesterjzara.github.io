@@ -996,7 +996,6 @@ const storeLocal = (dataType, stringData) => {
     window.localStorage.setItem(dataType, JSON.stringify(stringData));
 }
 const loadLocal = () => {
-    
     for (let key in localStorage) {
         if(localStorage.hasOwnProperty(key)){
             let playerObj = JSON.parse(window.localStorage.getItem(key))
@@ -1006,9 +1005,7 @@ const loadLocal = () => {
                 game.playerCache[key] = playerObj;
             }
         }
-        
     }
-
 }
 
 //Color Switching 
