@@ -10,6 +10,6 @@ This website primarily consists of a Player Comparison guessing game and a Team 
 
    On the website the game is played by clicking the button to get a random player and then clicking the correct team icon below. Users will need to switch the display between East and West to toggle the 15 teams in a given conference.
 
-   <a href="http://www.youtube.com/watch?feature=player_embedded&v=YOUTUBE_VIDEO_ID_HERE
-" target="_blank"><img src="http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg" 
-alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
+   <a href="http://www.youtube.com/watch?feature=player_embedded&v=cBHPQ25J07E
+" target="_blank"><img src="http://img.youtube.com/vi/cBHPQ25J07E/0.jpg" 
+alt="Inside the NBA Clip" width="400" height="300" border="10" /></a>
