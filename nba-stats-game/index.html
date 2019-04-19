@@ -15,6 +15,7 @@
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" charset="utf-8"></script>
         <script src="js/jquery.ui.touch-punch.min.js"></script>
         <script src="js/player_team_data.js" charset="utf-8"></script>
+        <script src="js/teamColors.js" charset="utf-8"></script>
         <script src="https://stats.nba.com/js/data/ptsd/stats_ptsd.js" charset="utf-8"></script>
         <script src="js/app.js" charset="utf-8"></script>
     </head>
@@ -22,9 +23,9 @@
         <div class="modal">
             <div class="modal-text-area">
                 <h1 class="modal-text"></h1>
-                <button class='reset-button'>Reset</button>
-                <p class='share-text'>Share this <a href='#' class='share-link'></a></p>
-                <button class="copy-button">Copy</button>
+                <button id='modal-reset' class='reset-button'>Reset</button>
+                <p class='share-text'><a href='#' class='share-link'></a></p>
+                <button class="copy-button">Copy to Clipboard</button>
             </div>
         </div>
         <h1>NBA Stats App</h1>

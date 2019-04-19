@@ -42,7 +42,7 @@ body {
     text-align: center;
     font-size: 3vh;
     flex-grow: 1;
-    border: 1px solid white;
+    border: 1px solid var(--line-color);
     color: var(--line-color);
     /* opacity: 0.7; */
 }
@@ -86,6 +86,10 @@ body {
 .color-container {
     background: rgba(0,0,0,0.3);
     color: white;
+    border-top: 5px solid black;
+}
+.color-content {
+    padding: 1em 1em 1em 4em;
 }
 .color-header {
     font-size: 2em;
@@ -98,7 +102,8 @@ body {
 .player-form {
     display: flex;
     flex-flow: row wrap;
-    border: 1px solid white;
+    justify-content: center;
+    /* border: 1px solid var(--line-color); */
 }
 .player-form > * {
     padding: 0.5em;
@@ -108,7 +113,8 @@ body {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
-    border: 1px solid white;
+    border: 1px solid var(--line-color);
+    background: var(--background-color-trans);
 }
 .player-select-bottom > *{
     padding: 0.5em;
@@ -159,7 +165,7 @@ body {
     flex-flow: row nowrap;
     justify-content: space-around;
     align-items: center;
-    border: 1px solid white;
+    border: 1px solid var(--line-color);
 }
 .player1-option, .player2-option {
     flex-basis: 30%;
@@ -168,11 +174,11 @@ body {
 }
 .player1-option {
     background-color: var(--accent-color1);
-    color: white;
+    color: var(--line-color);
 }
 .player2-option {
     background-color: var(--accent-color2);
-    color: white;
+    color: var(--line-color);
 }
 .player-stats-container {
     /* height: 79%; */
@@ -197,14 +203,14 @@ body {
 }
 .player1-stats-container, .player2-stats-container{
     flex-basis: 50%;
-    border: 1px solid white;
+    border: 1px solid var(--line-color);
 }
 .stat-box {
     background: var(--background-color-trans);
     font-family: Arial, Helvetica, sans-serif;
 }
 .stat-1 {
-    border-top: 1px solid white;
+    border-top: 1px solid var(--line-color);
 }
 .stat-1 li {
     padding: 0 0 0 0.5em;
@@ -303,7 +309,7 @@ ul {
 
 /* Modal For End Condition */
 .modal {
-	background-color: rgba(0,0,0,0.1);
+	background-color: rgba(0,0,0,0.3);
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -317,13 +323,45 @@ ul {
 	background-color: white;
 	/* height: 40vh;
 	width: 80vw; */
-	border-radius: 2px;
+	border-radius: 20px;
 	margin: 100px auto;
 	box-shadow: 0 2px 2px rgba(0,0,0,0.2);
 	/* Adds shadow to the box and makes it look more 3D */
 	padding: 2%;
     line-height: 3.5em;
     width: 80%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-content: center;
+}
+.share-text {
+    display:flex;
+    flex-flow: row nowrap;
+    justify-content: space-evenly;
+    width: 100%;
+    align-content: center;
+    font-size: 1.5em;
+    padding: 0 1% 0 1%;
+    box-sizing: border-box;
+}
+#modal-reset {
+    height: 6vh;
+    width: 60%;
+    align-self: center;
+    box-shadow: 10px;
+    border-radius: 10px;
+    box-shadow: 0px 17px 10px -10px rgba(0,0,0,0.4);
+    font-size: 1.5em;
+}
+.loss-message-text {
+    text-align: center;
+    font-size: 1.25em;
+}
+.copy-button {
+    border-radius: 10px;
+    box-shadow: 0px 17px 10px -10px rgba(0,0,0,0.4);
+    font-size: 1em;
 }
 
 /* Team Guess Game */
@@ -332,14 +370,14 @@ ul {
     flex-flow: row nowrap;
     font-weight: bold;
     font-family: Arial, Helvetica, sans-serif;
-    border: 2px solid white;
+    border: 2px solid var(--line-color);
 }
 .conference-select > div{
     flex-basis: 50%;
     text-align: center;
     padding: 1em 0;
     z-index: 99;
-    color: white;
+    color: var(--line-color);
     font-size: 2vh;
 }
 .eastern-conf {
@@ -355,12 +393,15 @@ ul {
     display: flex;
     flex-flow: row wrap;
     justify-content: center;
-    border: 4px solid var(--line-color);
+    /* border: 4px solid var(--line-color); */
+    border-left: 4px solid var(--accent-color1);
+    border-right: 4px solid var(--accent-color1);
+    border-bottom: 4px solid var(--accent-color2);
 }
 .team-container > * {
     width: 30%;
     height: 10vh;
-    border: 1px solid white;
+    border: 1px solid var(--line-color);
 }
 .team-input {
     display: flex;
@@ -388,8 +429,9 @@ ul {
     flex-flow: row nowrap;
     justify-content: center;
     height: 13vh;
-    border-left: 3px solid white;
-    border-right: 3px solid white;
+    border-left: 3px solid var(--line-color);
+    border-right: 3px solid var(--line-color);
+    background: var(--background-color-trans);
 }
 .team-player-name {
     flex-grow: 2;
@@ -468,9 +510,10 @@ ul {
     .main-stat {
         font-size: 6vw;
     }
-    
+    .about-message {
+        font-size: 1.4em;
+    }
 }
-
 
 
 @media only screen and (min-width: 1024px) {
@@ -546,8 +589,8 @@ ul {
         background: var(--background-color-trans);
     }
     .stat-1 {
-        border-top: 0px solid white;
-        border-left: 1px solid white;
+        border-top: 0px solid var(--line-color);
+        border-left: 1px solid var(--line-color);
     }
     .stat-1 li {
         padding: 0 0 0 1em;

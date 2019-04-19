@@ -561,7 +561,7 @@ const gameOverModal = (outcome) => {
         let p1 = game.playersInGame[0]['id']
         let p2 = game.playersInGame[1]['id']
         let link = `${baseURL}?gamemode=1&p1=${p1}&p2=${p2}`;
-        let $linkTag = $('.share-link').text('comparison').attr('href', link);
+        let $linkTag = $('.share-link').text('Share this Player Comparison:').attr('href', link);
         
         //Add a copy button so users can copy the link to their clipboard
         let $copyButton = $('.copy-button');
@@ -582,7 +582,7 @@ const gameOverModal = (outcome) => {
         let baseURL = window.location.href
         let player = game.teamGuessActivePlayer['id'];
         let link = `${baseURL}?gamemode=2&p=${player}`;
-        let $linkTag = $('.share-link').text('team guess challenge').attr('href', link);
+        let $linkTag = $('.share-link').text('Share this Team Guess challenge').attr('href', link);
         
         //Add a copy button so users can copy the link to their clipboard
         //TODO - could we dry this out?
@@ -634,7 +634,9 @@ const gameOverModal = (outcome) => {
         }
         //If Team Guessing - give the correct team when guessed wrong
         else if(game.activeGame === 2){
-            $('.modal-text').text(`You lose, ${game.teamGuessActivePlayer.fullName} is on the ${game.teamGuessActivePlayer.teamName}.`);
+            $('.modal-text').text(`You lose!`);
+            $loseP = $('<p>').text(`${game.teamGuessActivePlayer.fullName} is on the ${game.teamGuessActivePlayer.teamName}.`).addClass('loss-message-text');
+            $loseP.insertAfter( $('.modal-text') )
         }
     };
     //Show the modal and prevent further dragging of the player names for Player Comparison
@@ -738,6 +740,8 @@ const resetGame = () => {
     
     $('.modal').hide();
     $('.copy-button').off('click');
+    $('.loss-message-text').remove();
+
     
     $('.player-selected-list').empty();
     $('.team-player-name').empty();
@@ -869,13 +873,13 @@ const setupTeamGame = () => {
     $('.eastern-conf').on('click', () => {
         $('.west-team').hide();
         $('.western-conf').removeClass('conf-button-pressed');
-        $('.east-team').show();
+        $('.east-team').show('fast');
         $('.eastern-conf').addClass('conf-button-pressed');
     })
     $('.western-conf').on('click', () => {
         $('.east-team').hide()
         $('.eastern-conf').removeClass('conf-button-pressed');
-        $('.west-team').show();
+        $('.west-team').show('fast');
         $('.western-conf').addClass('conf-button-pressed')
     })
     //Event listener to reset game from the win/loss modal
@@ -909,10 +913,28 @@ const setupAboutInfo= () => {
     
     //Add Color Scheme Section - work in progress TODO
     let $colorContainer = $('<div>').addClass('color-container');
-    $colorContainer.append( $('<h2>').addClass('color-header').text('Color Theme Picker') );
-    $colorContainer.append( $('<div>').addClass('color-content').text('Coming Soon') );
+    $colorContainer.append( $('<h2>').addClass('color-header').text('Customize Color Scheme') );
+    $colorContainer.append( $('<div>').addClass('color-content'));
     $('.game-area-container').append($colorContainer);
+    
+    $form = $('<form>').addClass('color-form');
+    $('.color-content').append($form);
+    $form.append( $('<input>').attr( {
+        'type' : 'text',
+        'id' : "color-input-box",
+        'placeholder' : "Team Colors"
+    } ));
+     $form.append( $('<input>').attr( {
+        'type' : 'submit',
+        'value' : "Switch Colors",
+    } ));
+
+    $('#color-input-box').autocomplete({
+        source: teamNamesColorList
+    });
+    $('.color-form').on('submit', switchColorsEvent);
 }
+
 
 //Player Comparison AND Team Guessing
 //Takes input from URL params via checkURLParameters
@@ -975,24 +997,63 @@ const loadLocal = () => {
         
     }
 
-    // hasOwnProperty - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty
-
-    // let todoStored = JSON.parse(window.localStorage.getItem('todo'));
-	// let compStored = JSON.parse(window.localStorage.getItem('completed'))
-
-	// if(todoStored) {
-	// 	todoArray = todoStored;
-	// }
-	// if(compStored) {
-	// 	completedArray = compStored;
-	// }
 }
 
+//Color Switching 
+const activateBulce = () => {
+    let cssRoot = document.documentElement;
+    
+    cssRoot.style.setProperty('--accent-color2', 'rgba(206,17,65)');
+    cssRoot.style.setProperty('--accent-color1', 'rgba(6,25,34)');
+    cssRoot.style.setProperty('--accent-color2-trans', 'rgba(206,17,65, 0.7)');
+    cssRoot.style.setProperty('--accent-color1-trans', 'rgba(6,25,34, 0.7)');
+
+}
+const switchColors = (teamName) => {
+    
+    let cssRoot = document.documentElement;
+    if(teamName in teamColors) {
+        let accent1 = 'rgb(' + teamColors[teamName]['--accent-color1'] + ')';
+        let accent2 = 'rgb(' + teamColors[teamName]['--accent-color2'] + ')';
+        let line = 'rgb(' + teamColors[teamName]['--line-color'] + ')';
+        let accent1Trans = 'rgb(' + teamColors[teamName]['--accent-color1'] + ', 0.7)';
+        let accent2Trans = 'rgb(' + teamColors[teamName]['--accent-color2'] + ', 0.7)';
+        let lineTrans = 'rgb(' + teamColors[teamName]['--line-color'] + ', 0.5)';
+
+        cssRoot.style.setProperty('--accent-color1', accent1);
+        cssRoot.style.setProperty('--accent-color2', accent2);
+        cssRoot.style.setProperty('--line-color', line);
+        cssRoot.style.setProperty('--accent-color2-trans', accent1Trans);
+        cssRoot.style.setProperty('--accent-color1-trans', accent2Trans);
+        cssRoot.style.setProperty('--background-color-trans', lineTrans);
+    }
+    else {
+        console.log('Team/Colors not found');
+    }
+}
+const switchColorsEvent = (event) => {
+    //Prevent reloding and ruining colors
+    event.preventDefault();
+
+    let teamName = $('#color-input-box').val();
+    switchColors(teamName);
+
+    storeLocal('zzzcjz-nba-app-color', {'current-color' : teamName});
+}
 
 //On load code
 $( () => {
     //Check Cache
     loadLocal();
+
+    //Load Colors
+    let colorKey = 'zzzcjz-nba-app-color'
+    if(colorKey in window.localStorage) {
+        let currentColorObj = JSON.parse(window.localStorage.getItem(colorKey))
+        console.log('Color Obj', currentColorObj);
+        switchColors(currentColorObj['current-color']);
+    }
+
     
     //First build array to coorelate NBA.com player thumbnail links to player names
     game.playerHeadshotObj = processNBAOfficialData(stats_ptsd);
