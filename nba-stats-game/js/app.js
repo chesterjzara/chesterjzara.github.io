@@ -100,6 +100,13 @@ class Player {
         if(alreadyHasStats) {
             console.log(`Cached stats for ${this.fullName}:`);
             console.log(this.stats);
+
+            // //Get image url:
+            // let nbaDataName = this.lastName + ", " + this.firstName;
+            // if(game.playerHeadshotObj[nbaDataName] !== undefined) {
+            //     let playerHeadshotURL = game.playerHeadshotObj[nbaDataName][7];
+            //     this.imageURL = playerHeadshotURL;
+            // }
             game.playersInGame.push(this);
             console.log('Players:', game.playersInGame);
             updateSelectedPlayerDisplay();
@@ -409,6 +416,7 @@ const buildPlayerFromID = (data) => {
     let newPlayer = new Player(playerID, firstName, lastName, teamID, teamName);
     if (useStatData) {
         newPlayer['stats'] = data['stats'];
+        newPlayer['imageURL'] = data['imageURL'];
         console.log('Test Stats copy:', newPlayer);
     }
 

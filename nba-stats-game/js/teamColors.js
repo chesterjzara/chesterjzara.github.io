@@ -23,7 +23,11 @@ const teamColors = {
         "--accent-color1": "201, 8, 42",
         "--line-color": "255, 255, 255"
     },
-    "Atlanta Hawks": { "--accent-color2": "225,68,52", "--accent-color1": "196,214,0", "--line-color": "38,40,42" },
+    "Atlanta Hawks": { 
+        "--accent-color2": "225,68,52", 
+        "--accent-color1": "196,214,0", 
+        "--line-color": "38,40,42" 
+    },
     "Boston Celtics": { "--accent-color1": "0,122,51", "--accent-color2": "139,111,78", "--line-color": "255,255,255" },
     "Brooklyn Nets": { "--accent-color1": "0,0,0", "--accent-color2": "111,111,111", "--line-color": "255,255,255" },
     "Charlotte Hornets": { "--accent-color1": "29,17,96", "--accent-color2": "0,120,140", "--line-color": "161,161,164" },
