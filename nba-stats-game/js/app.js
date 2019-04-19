@@ -202,21 +202,22 @@ class Player {
         //Update Scoreboard then increment number of games
         $('.score-board').text(`Score: ${game.teamGuessScore[0]} of ${game.teamGuessScore[1]}`)
         game.teamGuessScore[1]++;
-
+        
+        //Show player Name on Page
         $('.team-player-name').text(this.fullName);
 
+        //Show player headshot image
         let nbaDataName = this.lastName + ", " + this.firstName;
-        
         if(game.playerHeadshotObj[nbaDataName] !== undefined) {
             let playerHeadshotURL = game.playerHeadshotObj[nbaDataName][7];
             console.log(playerHeadshotURL);
             $('.team-player-image').append( $("<img>").attr('src', playerHeadshotURL) );
-
         }
         else {
             //Todo - update this to use the silohoutee 
             $('.team-player-name').css( 'background', `url('https://stats.nba.com/media/img/league/nba-headshot-fallback.png')`);
         }
+        
         //Set the current active players to the Player instance we've created
         game.teamGuessActivePlayer = this;
 
@@ -320,9 +321,12 @@ const apiCallPlayerName = (searchParam) => {
     else if(firstCharacter === '/'){
         lookUpValue = searchParam.substring( 1, searchParam.length);
         for(let player in game.playerCache) {
-            if (game.playerCache[player][id] == lookUpValue){
-                skipAPI = true;
-                playerCacheKey = game.playerCache[player]['fullName'];
+            let validPlayer = ('id' in game.playerCache[player]);
+            if(validPlayer) {
+                if (game.playerCache[player]['id'] == lookUpValue){
+                    skipAPI = true;
+                    playerCacheKey = game.playerCache[player]['fullName'];
+                }
             }
         }
     }

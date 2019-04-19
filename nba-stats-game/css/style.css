@@ -245,7 +245,7 @@ ul {
     100% {background-color: ''}
 }
 .name-bounce {
-    animation: bounce 3s 1
+    animation: bounce 1.5s 1;
 }
 
 @keyframes bounce{
