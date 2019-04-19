@@ -77,3 +77,4 @@ The general approach flows from the navigation buttons. Clicking either the Play
     * Eg: give 2 players with similar stats instead of random
 1. Clean up code to use accessors instead of directly accessing class/object variables
 1. For the Player Comparison add a dropdown to have Top 50, 25, etc
+  1. Also ability to enter 1 player via text and enter the other randomly, currently random or top X will do 2 players always
