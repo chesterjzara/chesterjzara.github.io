@@ -22,6 +22,7 @@ This website was made with HTML, CSS, and Javascript.
 * Using jQuery for DOM manipulation (https://jquery.com/)
 * Also using jQueryUI for interactive effects (https://jqueryui.com/)
   * Specifically the following widgets: [Draggable](https://jqueryui.com/draggable/), [Droppable](https://jqueryui.com/droppable/), [Autocomplete](https://jqueryui.com/autocomplete/)
+  * Also using [Touch Punch](http://touchpunch.furf.com/) to use jQuery UI elements on mobile
 
 ### Data
 
