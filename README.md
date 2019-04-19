@@ -50,30 +50,30 @@ The general approach flows from the navigation buttons. Clicking either the Play
 ## Key Functionality
 
 1. API Usage
-  1. Pulling player names, stats, teams from Balldontlie.io
-  1. Pulling player images from NBA.com (not officially supported API) and matching names
+    * Pulling player names, stats, teams from Balldontlie.io
+    * Pulling player images from NBA.com (not officially supported API) and matching names
 1. Game 1 - Player Comparison Game
-  1. Random and Random Top 100 Player Options
-  1. Autocomplete on player name entry
-  1. Drag and Drop UI to play the game
-  1. Modal win/loss screen
-  1. Animations on various elements (bounce, pulse, position change on wrong answer)
-  1. Able to specify players via URL parameters
+    * Random and Random Top 100 Player Options
+    * Autocomplete on player name entry
+    * Drag and Drop UI to play the game
+    * Modal win/loss screen
+    * Animations on various elements (bounce, pulse, position change on wrong answer)
+    * Able to specify players via URL parameters
 1. Game 2 - Team Guessing Game
-  1. Animations on East/West button and changing teams
-  1. Modal win/loss screen - will explain why you lost
-  1. Able to specify players via URL parameters
-  1. Score board tracking and ability to reset
+    * Animations on East/West button and changing teams
+    * Modal win/loss screen - will explain why you lost
+    * Able to specify players via URL parameters
+    * Score board tracking and ability to reset
 1. General
-  1. Responsive design on all pages
-  1. localStorage Caching of player stats to avoid too many API calls
-  1. Customizable color scheme (also persistently stored in localStorage)
+    * Responsive design on all pages
+    * localStorage Caching of player stats to avoid too many API calls
+    * Customizable color scheme (also persistently stored in localStorage)
 
 ## Unsolved Issues / Future Improvements
 
 1. Tooltips for more stats or other information
 1. Buttons to share comparison/player to social media instead of just copy-paste
 1. Store data on all players season averages to offer harder comparisons
-  1. Eg: give 2 players with similar stats instead of random
+    * Eg: give 2 players with similar stats instead of random
 1. Clean up code to use accessors instead of directly accessing class/object variables
 1. For the Player Comparison add a dropdown to have Top 50, 25, etc
