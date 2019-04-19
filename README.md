@@ -1,6 +1,6 @@
 # NBA Stat Guessing Games
 
-explanations of the technologies used, the approach taken, a link to your live site, installation instructions, unsolved problems, etc.
+https://chesterjzara.github.io/nba-stats-game/index.html
 
 This website primarily consists of a Player Comparison guessing game and a Team Guessing game. 
 1. The Player Comparison is inspired by an all-too-common practice employed on basketball forums since time immemorial. If you think your guy is underrated, find another, better regarded, player with similar boxscores. Then you can post both and challenge other users to guess which is which. This way you can make your point while ignoring all context to the statistics! 
@@ -13,3 +13,10 @@ This website primarily consists of a Player Comparison guessing game and a Team 
    <a href="http://www.youtube.com/watch?feature=player_embedded&v=cBHPQ25J07E
 " target="_blank"><img src="http://img.youtube.com/vi/cBHPQ25J07E/0.jpg" 
 alt="Inside the NBA Clip" width="400" height="300" border="10" /></a>
+
+## Technology Used
+
+This website was made with HTML, CSS, and Javascript.
+* Using jQuery for DOM manipulation (https://jquery.com/)
+* Also using jQueryUI for interactive effects (https://jqueryui.com/)
+** Specifically the following widgets: [Draggable](https://jqueryui.com/draggable/), [Droppable](https://jqueryui.com/droppable/), [Autocomplete](https://jqueryui.com/autocomplete/)
