@@ -45,9 +45,35 @@ The general approach flows from the navigation buttons. Clicking either the Play
 
 [Link to Code Path Diagram](https://docs.google.com/presentation/d/1nlp0zW-yGjsSI5BqZHMwPQAUvTLpzgBSfxVpxEza0ZE/edit?usp=sharing)
 
+![alt-text](https://github.com/chesterjzara/chesterjzara.github.io/blob/master/nba-stats-game/notes/code-diagram-4-18.png)
+
 ## Key Functionality
 
-1. 
+1. API Usage
+  1. Pulling player names, stats, teams from Balldontlie.io
+  1. Pulling player images from NBA.com (not officially supported API) and matching names
+1. Game 1 - Player Comparison Game
+  1. Random and Random Top 100 Player Options
+  1. Autocomplete on player name entry
+  1. Drag and Drop UI to play the game
+  1. Modal win/loss screen
+  1. Animations on various elements (bounce, pulse, position change on wrong answer)
+  1. Able to specify players via URL parameters
+1. Game 2 - Team Guessing Game
+  1. Animations on East/West button and changing teams
+  1. Modal win/loss screen - will explain why you lost
+  1. Able to specify players via URL parameters
+  1. Score board tracking and ability to reset
+1. General
+  1. Responsive design on all pages
+  1. localStorage Caching of player stats to avoid too many API calls
+  1. Customizable color scheme (also persistently stored in localStorage)
 
+## Unsolved Issues / Future Improvements
 
-## Unsolved Issues
+1. Tooltips for more stats or other information
+1. Buttons to share comparison/player to social media instead of just copy-paste
+1. Store data on all players season averages to offer harder comparisons
+  1. Eg: give 2 players with similar stats instead of random
+1. Clean up code to use accessors instead of directly accessing class/object variables
+1. For the Player Comparison add a dropdown to have Top 50, 25, etc
